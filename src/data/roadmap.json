@@ -22,7 +22,7 @@
         "Syllable structure"
       ],
       "resources": [
-        "duolingo-korean",
+        "sogang-korean",
         "talk-to-me-in-korean",
         "naver-dictionary"
       ],
@@ -46,7 +46,7 @@
         "Age and nationality"
       ],
       "resources": [
-        "duolingo-korean",
+        "sogang-korean",
         "talk-to-me-in-korean",
         "korean-class-101"
       ],
@@ -94,7 +94,7 @@
         "Months"
       ],
       "resources": [
-        "duolingo-korean",
+        "sogang-korean",
         "talk-to-me-in-korean",
         "naver-dictionary"
       ],
@@ -117,7 +117,7 @@
         "Transportation",
         "Emergency phrases"
       ],
-      "resources": ["duolingo-korean", "talk-to-me-in-korean", "hellotalk"],
+      "resources": ["sogang-korean", "talk-to-me-in-korean", "hellotalk"],
       "completed": false,
       "prerequisites": ["numbers-time"]
     },
