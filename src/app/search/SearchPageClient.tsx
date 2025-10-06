@@ -217,7 +217,11 @@ export default function SearchPageClient() {
                     onChange={(e) =>
                       setFilters((prev) => ({
                         ...prev,
-                        level: (e.target.value as any) || undefined,
+                        level:
+                          (e.target.value as
+                            | "Beginner"
+                            | "Intermediate"
+                            | "Advanced") || undefined,
                       }))
                     }
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -273,7 +277,11 @@ export default function SearchPageClient() {
                     onChange={(e) =>
                       setFilters((prev) => ({
                         ...prev,
-                        language: (e.target.value as any) || undefined,
+                        language:
+                          (e.target.value as
+                            | "English"
+                            | "Korean"
+                            | "Bilingual") || undefined,
                       }))
                     }
                     className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"

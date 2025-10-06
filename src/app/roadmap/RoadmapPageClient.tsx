@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock, Target, BookOpen, Users, CheckCircle } from "lucide-react";
+import { Target, BookOpen, Users, CheckCircle } from "lucide-react";
 import RoadmapAccordion from "@/components/RoadmapAccordion";
 import type { Roadmap, Resource } from "@/types";
 import roadmapData from "@/data/roadmap.json";
