@@ -11,7 +11,6 @@ const Footer: React.FC = () => {
   const footerLinks = {
     learn: [
       { label: "Roadmap", labelKorean: "로드맵", href: "/roadmap" },
-      { label: "Resources", labelKorean: "자료", href: "/resources" },
       { label: "Search", labelKorean: "검색", href: "/search" },
       { label: "Cultural Tips", labelKorean: "문화 팁", href: "/culture" },
     ],

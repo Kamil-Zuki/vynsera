@@ -103,10 +103,10 @@ export default function HomePageClient() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link
-                href="/resources"
+                href="/search"
                 className="inline-flex items-center gap-2 border-2 border-primary text-primary hover:bg-primary hover:text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors focus-ring"
               >
-                {showKorean ? "자료 둘러보기" : "Browse Resources"}
+                {showKorean ? "자료 검색하기" : "Search Resources"}
                 <BookOpen className="w-5 h-5" />
               </Link>
             </div>
@@ -196,10 +196,10 @@ export default function HomePageClient() {
           </div>
           <div className="text-center mt-12">
             <Link
-              href="/resources"
+              href="/search"
               className="inline-flex items-center gap-2 bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors focus-ring"
             >
-              View All Resources
+              {showKorean ? "모든 자료 보기" : "View All Resources"}
               <ArrowRight className="w-5 h-5" />
             </Link>
           </div>
@@ -225,11 +225,11 @@ export default function HomePageClient() {
               View Roadmap
             </Link>
             <Link
-              href="/resources"
+              href="/search"
               className="inline-flex items-center gap-2 border-2 border-white text-white hover:bg-white hover:text-primary px-8 py-4 rounded-lg font-semibold text-lg transition-colors focus-ring"
             >
               <Search className="w-5 h-5" />
-              Explore Resources
+              {showKorean ? "자료 검색하기" : "Search Resources"}
             </Link>
           </div>
         </div>

@@ -58,12 +58,6 @@ const Navigation: React.FC = () => {
       icon: "map",
     },
     {
-      label: "Resources",
-      labelKorean: "자료",
-      href: "/resources",
-      icon: "book",
-    },
-    {
       label: "Search",
       labelKorean: "검색",
       href: "/search",
