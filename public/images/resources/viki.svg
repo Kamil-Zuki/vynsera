@@ -1,0 +1,7 @@
+<svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#FFFFFF"/>
+  <rect x="50" y="50" width="200" height="100" rx="8" fill="#1D3557"/>
+  <polygon points="120,80 120,120 160,100" fill="#E63946"/>
+  <text x="150" y="130" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="12" font-weight="bold">Viki Learn Mode</text>
+  <text x="150" y="145" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="10">Korean Dramas with Subtitles</text>
+</svg>

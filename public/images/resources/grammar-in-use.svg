@@ -1,0 +1,8 @@
+<svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="200" fill="#FFFFFF"/>
+  <rect x="50" y="50" width="200" height="100" rx="8" fill="#457B9D"/>
+  <rect x="70" y="70" width="40" height="60" fill="#A8DADC"/>
+  <rect x="120" y="70" width="40" height="60" fill="#A8DADC"/>
+  <rect x="170" y="70" width="40" height="60" fill="#A8DADC"/>
+  <text x="150" y="145" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="12" font-weight="bold">Korean Grammar in Use</text>
+</svg>
