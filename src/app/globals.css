@@ -72,6 +72,22 @@
   --card-foreground: #f8fafc;
 }
 
+/* Light theme class for manual toggle */
+.light {
+  --background: #f1faee;
+  --foreground: #1d3557;
+  --primary: #e63946;
+  --primary-hover: #d62828;
+  --secondary: #a8dadc;
+  --accent: #f4a261;
+  --accent-hover: #e76f51;
+  --muted: #457b9d;
+  --muted-foreground: #6b7280;
+  --border: #e5e7eb;
+  --card: #ffffff;
+  --card-foreground: #1d3557;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

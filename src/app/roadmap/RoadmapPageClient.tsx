@@ -5,16 +5,20 @@ import RoadmapAccordion from "@/components/RoadmapAccordion";
 import type { Roadmap, Resource } from "@/types";
 import roadmapData from "@/data/roadmap.json";
 import resourcesData from "@/data/resources.json";
+import { useProgress } from "@/components/ProgressProvider";
 
 export default function RoadmapPageClient() {
   const roadmap: Roadmap = roadmapData as Roadmap;
   const resources: Resource[] = resourcesData as Resource[];
+  const { completedSteps, getProgressPercentage } = useProgress();
+
+  const progressPercentage = getProgressPercentage(roadmap.steps.length);
 
   const stats = [
     { label: "Total Steps", value: roadmap.steps.length, icon: Target },
-    { label: "Estimated Time", value: roadmap.totalEstimatedTime, icon: Clock },
+    { label: "Completed", value: `${completedSteps.size}`, icon: CheckCircle },
+    { label: "Progress", value: `${progressPercentage}%`, icon: Users },
     { label: "Resources", value: resources.length, icon: BookOpen },
-    { label: "Success Rate", value: "95%", icon: Users },
   ];
 
   const levels = [
@@ -116,14 +120,17 @@ export default function RoadmapPageClient() {
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <div className="text-2xl font-bold text-foreground">
-                  0 / {roadmap.steps.length}
+                  {completedSteps.size} / {roadmap.steps.length}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   Steps Completed
                 </div>
               </div>
               <div className="w-32 h-3 bg-muted rounded-full overflow-hidden">
-                <div className="w-0 h-full bg-primary transition-all duration-300"></div>
+                <div
+                  className="h-full bg-primary transition-all duration-300"
+                  style={{ width: `${progressPercentage}%` }}
+                ></div>
               </div>
             </div>
           </div>

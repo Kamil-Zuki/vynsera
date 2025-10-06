@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import type { RoadmapStep, Resource } from "@/types";
 import { useLanguage } from "./LanguageProvider";
+import { useProgress } from "./ProgressProvider";
 
 interface RoadmapAccordionProps {
   steps: RoadmapStep[];
@@ -51,6 +52,7 @@ const RoadmapAccordion: React.FC<RoadmapAccordionProps> = ({
   onStepToggle,
 }) => {
   const { showKorean } = useLanguage();
+  const { isStepCompleted, toggleStep: toggleProgress } = useProgress();
   const [expandedSteps, setExpandedSteps] = useState<Set<string>>(new Set());
 
   const toggleStep = (stepId: string) => {
@@ -64,6 +66,11 @@ const RoadmapAccordion: React.FC<RoadmapAccordionProps> = ({
     onStepToggle?.(stepId);
   };
 
+  const handleProgressToggle = (stepId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent accordion from toggling
+    toggleProgress(stepId);
+  };
+
   const getResourceById = (resourceId: string) => {
     return resources.find((resource) => resource.id === resourceId);
   };
@@ -72,7 +79,7 @@ const RoadmapAccordion: React.FC<RoadmapAccordionProps> = ({
     <div className="space-y-4">
       {steps.map((step) => {
         const isExpanded = expandedSteps.has(step.id);
-        const isCompleted = step.completed;
+        const isCompleted = isStepCompleted(step.id);
 
         return (
           <div
@@ -100,6 +107,19 @@ const RoadmapAccordion: React.FC<RoadmapAccordionProps> = ({
                         </span>
                       )}
                     </div>
+
+                    {/* Progress Checkbox */}
+                    <button
+                      onClick={(e) => handleProgressToggle(step.id, e)}
+                      className="flex items-center justify-center w-6 h-6 rounded border-2 border-muted-foreground hover:border-primary transition-colors focus-ring"
+                      aria-label={
+                        isCompleted ? "Mark as incomplete" : "Mark as complete"
+                      }
+                    >
+                      {isCompleted && (
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      )}
+                    </button>
                     {isExpanded ? (
                       <ChevronDown className="w-5 h-5 text-muted-foreground" />
                     ) : (

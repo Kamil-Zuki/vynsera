@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import { ProgressProvider } from "@/components/ProgressProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -111,11 +112,13 @@ export default function RootLayout({
       <body className="min-h-screen bg-background text-foreground antialiased">
         <ThemeProvider>
           <LanguageProvider>
-            <div className="flex flex-col min-h-screen">
-              <Navigation />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <ProgressProvider>
+              <div className="flex flex-col min-h-screen">
+                <Navigation />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </ProgressProvider>
           </LanguageProvider>
         </ThemeProvider>
       </body>

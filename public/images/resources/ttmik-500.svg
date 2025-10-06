@@ -1,0 +1,10 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="100" rx="20" fill="#8B5CF6"/>
+  <rect x="15" y="20" width="70" height="60" rx="8" fill="white"/>
+  <text x="50" y="35" text-anchor="middle" fill="#1F2937" font-family="Arial, sans-serif" font-size="8" font-weight="bold">TTMIK</text>
+  <text x="50" y="50" text-anchor="middle" fill="#1F2937" font-family="Arial, sans-serif" font-size="8">500단어</text>
+  <text x="50" y="65" text-anchor="middle" fill="#1F2937" font-family="Arial, sans-serif" font-size="8">ANKI덱</text>
+  <circle cx="25" cy="15" r="2" fill="#F59E0B"/>
+  <circle cx="35" cy="15" r="2" fill="#EF4444"/>
+  <circle cx="45" cy="15" r="2" fill="#10B981"/>
+</svg>
