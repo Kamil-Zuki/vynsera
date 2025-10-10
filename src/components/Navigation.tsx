@@ -3,20 +3,23 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Moon, Sun } from "lucide-react";
+import { Menu, X, Moon, Sun, Bookmark } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { useLanguage } from "./LanguageProvider";
+import { useWatchlist } from "./WatchlistProvider";
 
 const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, showKorean } = useLanguage();
+  const { watchlistCount } = useWatchlist();
 
   const navigationItems = [
     { label: "Home", labelKorean: "홈", href: "/" },
     { label: "Roadmap", labelKorean: "로드맵", href: "/roadmap" },
     { label: "Search", labelKorean: "검색", href: "/search" },
+    { label: "Watchlist", labelKorean: "관심 목록", href: "/watchlist" },
   ];
 
   return (
@@ -37,13 +40,18 @@ const Navigation: React.FC = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm transition-colors ${
+                className={`text-sm transition-colors relative ${
                   pathname === item.href
                     ? "text-foreground font-medium"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {showKorean && item.labelKorean ? item.labelKorean : item.label}
+                {item.href === "/watchlist" && watchlistCount > 0 && (
+                  <span className="absolute -top-2 -right-4 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {watchlistCount}
+                  </span>
+                )}
               </Link>
             ))}
           </div>
@@ -89,13 +97,22 @@ const Navigation: React.FC = () => {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`block py-2 text-sm transition-colors ${
+                className={`flex items-center justify-between py-2 text-sm transition-colors ${
                   pathname === item.href
                     ? "text-foreground font-medium"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {showKorean && item.labelKorean ? item.labelKorean : item.label}
+                <span>
+                  {showKorean && item.labelKorean
+                    ? item.labelKorean
+                    : item.label}
+                </span>
+                {item.href === "/watchlist" && watchlistCount > 0 && (
+                  <span className="bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5">
+                    {watchlistCount}
+                  </span>
+                )}
               </Link>
             ))}
           </div>

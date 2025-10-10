@@ -44,14 +44,20 @@ const RoadmapAccordion: React.FC<RoadmapAccordionProps> = ({ roadmap }) => {
             className="border border-border/40 rounded-lg overflow-hidden"
           >
             {/* Header */}
-            <button
-              onClick={() => toggleStep_Accordion(index)}
-              className="w-full flex items-center justify-between p-6 text-left transition-colors hover:bg-muted/30"
-            >
+            <div className="w-full flex items-center justify-between p-6 transition-colors hover:bg-muted/30">
               <div className="flex items-center gap-4 flex-1">
-                <button
+                <div
                   onClick={(e) => handleProgressToggle(e, step.id)}
-                  className={`flex-shrink-0 w-5 h-5 rounded border-2 transition-colors ${
+                  role="checkbox"
+                  aria-checked={isCompleted}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      handleProgressToggle(e as any, step.id);
+                    }
+                  }}
+                  className={`flex-shrink-0 w-5 h-5 rounded border-2 transition-colors cursor-pointer ${
                     isCompleted
                       ? "bg-foreground border-foreground"
                       : "border-border/60"
@@ -60,24 +66,32 @@ const RoadmapAccordion: React.FC<RoadmapAccordionProps> = ({ roadmap }) => {
                   {isCompleted && (
                     <Check className="w-full h-full text-background p-0.5" />
                   )}
-                </button>
+                </div>
 
-                <div className="flex-1">
+                <button
+                  onClick={() => toggleStep_Accordion(index)}
+                  className="flex-1 text-left"
+                >
                   <h3 className="font-semibold text-foreground mb-1">
                     {showKorean && step.titleKorean
                       ? step.titleKorean
                       : step.title}
                   </h3>
                   <p className="text-sm text-muted-foreground">{step.level}</p>
-                </div>
+                </button>
               </div>
 
-              <ChevronDown
-                className={`w-5 h-5 text-muted-foreground transition-transform ${
-                  isOpen ? "transform rotate-180" : ""
-                }`}
-              />
-            </button>
+              <button
+                onClick={() => toggleStep_Accordion(index)}
+                aria-label={isOpen ? "Collapse" : "Expand"}
+              >
+                <ChevronDown
+                  className={`w-5 h-5 text-muted-foreground transition-transform ${
+                    isOpen ? "transform rotate-180" : ""
+                  }`}
+                />
+              </button>
+            </div>
 
             {/* Content */}
             {isOpen && (

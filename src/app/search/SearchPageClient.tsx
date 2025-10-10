@@ -126,8 +126,8 @@ export default function SearchPageClient() {
           </h1>
           <p className="text-lg text-muted-foreground">
             {showKorean
-              ? "215개 이상의 한국어 학습 자료를 검색하세요"
-              : "Search through 215+ Korean learning resources"}
+              ? "79개 이상의 한국어 학습 자료를 검색하세요"
+              : "Search through 79+ Korean learning resources"}
           </p>
         </div>
       </section>

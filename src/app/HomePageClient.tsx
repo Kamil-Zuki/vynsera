@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BookOpen, Map } from "lucide-react";
+import { ArrowRight, BookOpen, Map, Bookmark } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
+import { useWatchlist } from "@/components/WatchlistProvider";
 
 export default function HomePageClient() {
   const { showKorean } = useLanguage();
+  const { watchlistCount } = useWatchlist();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -42,36 +44,42 @@ export default function HomePageClient() {
       {/* Simple Stats */}
       <section className="border-t border-border/40 py-16 px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-center">
             <div>
-              <div className="text-4xl font-bold text-foreground mb-2">
-                215+
-              </div>
+              <div className="text-4xl font-bold text-foreground mb-2">79+</div>
               <div className="text-sm text-muted-foreground">
                 {showKorean ? "학습 자료" : "Learning Resources"}
               </div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-foreground mb-2">5</div>
+              <div className="text-4xl font-bold text-foreground mb-2">12</div>
               <div className="text-sm text-muted-foreground">
-                {showKorean ? "단계별 로드맵" : "Stage Roadmap"}
+                {showKorean ? "학습 단계" : "Learning Steps"}
               </div>
             </div>
             <div>
               <div className="text-4xl font-bold text-foreground mb-2">
-                100%
+                {watchlistCount}
               </div>
               <div className="text-sm text-muted-foreground">
-                {showKorean ? "무료" : "Free"}
+                {showKorean ? "저장된 자료" : "Saved Resources"}
+              </div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold text-foreground mb-2">
+                90%+
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {showKorean ? "무료 자료" : "Free Resources"}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Two Column Feature */}
+      {/* Three Column Feature */}
       <section className="py-16 px-6">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           <Link href="/roadmap" className="group">
             <div className="border border-border/40 rounded-lg p-8 transition-all hover:border-foreground/20">
               <Map className="w-8 h-8 text-foreground mb-4" />
@@ -97,11 +105,28 @@ export default function HomePageClient() {
               </h3>
               <p className="text-muted-foreground mb-4">
                 {showKorean
-                  ? "215개 이상의 선별된 한국어 학습 자료를 탐색하세요"
-                  : "Explore 215+ curated Korean learning resources"}
+                  ? "79개 이상의 선별된 한국어 학습 자료를 탐색하세요"
+                  : "Explore 79+ curated Korean learning resources"}
               </p>
               <span className="text-sm text-foreground group-hover:underline">
                 {showKorean ? "자료 검색" : "Search Resources"} →
+              </span>
+            </div>
+          </Link>
+
+          <Link href="/watchlist" className="group">
+            <div className="border border-border/40 rounded-lg p-8 transition-all hover:border-foreground/20">
+              <Bookmark className="w-8 h-8 text-foreground mb-4" />
+              <h3 className="text-2xl font-semibold text-foreground mb-3">
+                {showKorean ? "내 관심 목록" : "My Watchlist"}
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {showKorean
+                  ? "저장된 자료를 확인하고 학습 계획을 세우세요"
+                  : "View your saved resources and plan your learning"}
+              </p>
+              <span className="text-sm text-foreground group-hover:underline">
+                {showKorean ? "관심 목록 보기" : "View Watchlist"} →
               </span>
             </div>
           </Link>
