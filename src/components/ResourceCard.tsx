@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { ExternalLink, Bookmark } from "lucide-react";
+import { useSession } from "next-auth/react";
 import type { Resource } from "@/types";
 import { useLanguage } from "./LanguageProvider";
 import { useWatchlist } from "./WatchlistProvider";
@@ -11,9 +12,11 @@ interface ResourceCardProps {
 }
 
 const ResourceCard: React.FC<ResourceCardProps> = ({ resource }) => {
+  const { status } = useSession();
   const { showKorean } = useLanguage();
   const { isInWatchlist, addToWatchlist, removeFromWatchlist } = useWatchlist();
   const inWatchlist = isInWatchlist(resource.id);
+  const isAuthenticated = status === "authenticated";
 
   const handleWatchlistClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -79,27 +82,29 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ resource }) => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleWatchlistClick}
-            className={`p-2 rounded-lg transition-colors ${
-              inWatchlist
-                ? "bg-primary text-primary-foreground"
-                : "hover:bg-muted"
-            }`}
-            title={
-              inWatchlist
-                ? showKorean
-                  ? "관심 목록에서 제거"
-                  : "Remove from watchlist"
-                : showKorean
-                ? "관심 목록에 추가"
-                : "Add to watchlist"
-            }
-          >
-            <Bookmark
-              className={`w-4 h-4 ${inWatchlist ? "fill-current" : ""}`}
-            />
-          </button>
+          {isAuthenticated && (
+            <button
+              onClick={handleWatchlistClick}
+              className={`p-2 rounded-lg transition-colors ${
+                inWatchlist
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`}
+              title={
+                inWatchlist
+                  ? showKorean
+                    ? "관심 목록에서 제거"
+                    : "Remove from watchlist"
+                  : showKorean
+                  ? "관심 목록에 추가"
+                  : "Add to watchlist"
+              }
+            >
+              <Bookmark
+                className={`w-4 h-4 ${inWatchlist ? "fill-current" : ""}`}
+              />
+            </button>
+          )}
           <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
         </div>
       </div>

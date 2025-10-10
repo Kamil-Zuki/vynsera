@@ -1,18 +1,59 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, Trophy } from "lucide-react";
+import { CheckCircle, Trophy, Lock } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import VisualRoadmap from "@/components/VisualRoadmap";
 import type { Roadmap } from "@/types";
 import { useProgress } from "@/components/ProgressProvider";
 import { useLanguage } from "@/components/LanguageProvider";
 
 export default function RoadmapPageClient() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const { showKorean } = useLanguage();
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { getProgressPercentage, isStepCompleted } = useProgress();
+
+  // Check authentication
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">
+          {showKorean ? "로딩 중..." : "Loading..."}
+        </p>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <div className="max-w-md text-center">
+          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-10 h-10 text-muted-foreground" />
+          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-4">
+            {showKorean ? "로그인이 필요합니다" : "Sign In Required"}
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            {showKorean
+              ? "로드맵 기능을 사용하려면 Google 계정으로 로그인해주세요. 진행 상황이 모든 기기에 동기화됩니다."
+              : "Please sign in with your Google account to access the roadmap feature. Your progress will be synced across all devices."}
+          </p>
+          <button
+            onClick={() => router.push("/auth/signin")}
+            className="px-6 py-3 bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors font-medium"
+          >
+            {showKorean ? "로그인" : "Sign In with Google"}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     async function fetchRoadmap() {

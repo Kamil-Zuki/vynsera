@@ -27,12 +27,32 @@ const Navigation: React.FC = () => {
   const { watchlistCount } = useWatchlist();
   const { data: session, status } = useSession();
 
-  const navigationItems = [
-    { label: "Home", labelKorean: "홈", href: "/" },
-    { label: "Roadmap", labelKorean: "로드맵", href: "/roadmap" },
-    { label: "Search", labelKorean: "검색", href: "/search" },
-    { label: "Watchlist", labelKorean: "관심 목록", href: "/watchlist" },
+  const allNavigationItems = [
+    { label: "Home", labelKorean: "홈", href: "/", requiresAuth: false },
+    {
+      label: "Roadmap",
+      labelKorean: "로드맵",
+      href: "/roadmap",
+      requiresAuth: true,
+    },
+    {
+      label: "Search",
+      labelKorean: "검색",
+      href: "/search",
+      requiresAuth: false,
+    },
+    {
+      label: "Watchlist",
+      labelKorean: "관심 목록",
+      href: "/watchlist",
+      requiresAuth: true,
+    },
   ];
+
+  // Filter navigation items based on authentication
+  const navigationItems = allNavigationItems.filter(
+    (item) => !item.requiresAuth || status === "authenticated"
+  );
 
   return (
     <nav className="border-b border-border/40">
