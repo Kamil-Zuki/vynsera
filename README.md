@@ -17,6 +17,8 @@ A comprehensive, static-first Korean language learning website built with Next.j
 
 - **Framework**: Next.js 15+ with App Router
 - **Language**: TypeScript 5.6+
+- **Database**: MongoDB 7
+- **ODM**: Mongoose
 - **Styling**: Tailwind CSS 4.0+
 - **Icons**: Lucide React
 - **Deployment**: Docker + Nginx on VPS
@@ -43,6 +45,10 @@ A comprehensive, static-first Korean language learning website built with Next.j
 ```
 src/
 ├── app/                    # Next.js App Router pages
+│   ├── api/               # API routes
+│   │   ├── resources/    # Resources API endpoint
+│   │   ├── roadmap/      # Roadmap API endpoint
+│   │   └── health/       # Health check endpoint
 │   ├── resources/         # Resources listing page
 │   ├── roadmap/          # Learning roadmap page
 │   ├── layout.tsx        # Root layout with navigation
@@ -52,11 +58,18 @@ src/
 │   ├── RoadmapAccordion.tsx # Interactive roadmap
 │   ├── Navigation.tsx    # Site navigation
 │   └── Footer.tsx        # Site footer
-├── data/                 # Static JSON data
+├── data/                 # JSON data (for seeding)
 │   ├── resources.json    # Learning resources
 │   └── roadmap.json      # Learning roadmap steps
+├── lib/                  # Utilities
+│   └── mongodb.ts        # Database connection
+├── models/               # Mongoose models
+│   ├── Resource.ts       # Resource model
+│   └── Roadmap.ts        # Roadmap model
 └── types/                # TypeScript type definitions
     └── index.ts          # All type interfaces
+scripts/
+└── seed-database.ts      # Database seeding script
 ```
 
 ## 🛠️ Development
@@ -65,6 +78,7 @@ src/
 
 - Node.js 22+
 - npm or yarn
+- MongoDB 7+ (or Docker for MongoDB)
 - Docker (for deployment)
 
 ### Local Development
@@ -82,23 +96,49 @@ src/
    npm install
    ```
 
-3. **Start development server**
+3. **Set up environment variables**
+
+   Create a `.env.local` file:
+
+   ```env
+   MONGODB_URI=mongodb://localhost:27017/vynsera
+   ```
+
+4. **Start MongoDB**
+
+   Using Docker Compose:
+
+   ```bash
+   docker-compose up -d mongodb
+   ```
+
+5. **Seed the database**
+
+   ```bash
+   npm run seed
+   ```
+
+6. **Start development server**
 
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
+7. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+For detailed database setup and management, see [DATABASE.md](./DATABASE.md) and [SETUP.md](./SETUP.md).
 
 ### Available Scripts
 
 - `npm run dev` - Start development server with Turbopack
 - `npm run build` - Build for production
 - `npm run start` - Start production server
+- `npm run seed` - Seed database with resources and roadmap data
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint errors
 - `npm run type-check` - Run TypeScript type checking
+- `npm run deploy` - Build and deploy with Docker Compose
 
 ## 🚀 Deployment
 
@@ -127,7 +167,13 @@ src/
    ./deploy.sh
    ```
 
-3. **Configure domain and SSL**
+3. **Seed the production database**
+
+   ```bash
+   docker-compose exec vynsera npm run seed
+   ```
+
+4. **Configure domain and SSL**
    - Update `nginx.conf` with your domain
    - Place SSL certificates in `ssl/` directory
    - Restart containers: `docker-compose restart`
@@ -150,9 +196,15 @@ src/
 Create a `.env.local` file for local development:
 
 ```env
+# Required
+MONGODB_URI=mongodb://localhost:27017/vynsera
+
+# Optional
 NEXT_PUBLIC_SITE_URL=https://vynsera.com
 NEXT_PUBLIC_GOOGLE_ANALYTICS_ID=your-ga-id
 ```
+
+For production with Docker Compose, the `MONGODB_URI` is automatically set to connect to the MongoDB container.
 
 ## 📊 Performance
 

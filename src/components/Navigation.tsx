@@ -1,111 +1,34 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Menu,
-  X,
-  BookOpen,
-  Map,
-  Home,
-  Search,
-  Globe,
-  Moon,
-  Sun,
-  Monitor,
-} from "lucide-react";
-import type { NavigationItem } from "@/types";
+import { Menu, X, Moon, Sun } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { useLanguage } from "./LanguageProvider";
 
 const Navigation: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { theme, setTheme, actualTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { language, setLanguage, showKorean } = useLanguage();
-  const themeMenuRef = useRef<HTMLDivElement>(null);
 
-  // Close theme menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        themeMenuRef.current &&
-        !themeMenuRef.current.contains(event.target as Node)
-      ) {
-        setIsThemeMenuOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const navigationItems: NavigationItem[] = [
-    {
-      label: "Home",
-      labelKorean: "홈",
-      href: "/",
-      icon: "home",
-    },
-    {
-      label: "Roadmap",
-      labelKorean: "로드맵",
-      href: "/roadmap",
-      icon: "map",
-    },
-    {
-      label: "Search",
-      labelKorean: "검색",
-      href: "/search",
-      icon: "search",
-    },
+  const navigationItems = [
+    { label: "Home", labelKorean: "홈", href: "/" },
+    { label: "Roadmap", labelKorean: "로드맵", href: "/roadmap" },
+    { label: "Search", labelKorean: "검색", href: "/search" },
   ];
 
-  const getIcon = (iconName: string) => {
-    switch (iconName) {
-      case "home":
-        return <Home className="w-5 h-5" />;
-      case "map":
-        return <Map className="w-5 h-5" />;
-      case "book":
-        return <BookOpen className="w-5 h-5" />;
-      case "search":
-        return <Search className="w-5 h-5" />;
-      default:
-        return null;
-    }
-  };
-
-  const isActive = (href: string) => {
-    if (href === "/") {
-      return pathname === "/";
-    }
-    return pathname.startsWith(href);
-  };
-
   return (
-    <nav className="bg-card/95 border-b border-border sticky top-0 z-50 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="border-b border-border/40">
+      <div className="max-w-6xl mx-auto px-6 sm:px-8">
+        <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Globe className="w-5 h-5 text-white" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-card-foreground group-hover:text-primary transition-colors">
-                Vynsera
-              </span>
-              {showKorean && (
-                <span className="text-xs text-muted-foreground korean-text">
-                  한국어 학습
-                </span>
-              )}
-            </div>
+          <Link
+            href="/"
+            className="text-xl font-semibold text-foreground hover:opacity-80 transition-opacity"
+          >
+            Vynsera
           </Link>
 
           {/* Desktop Navigation */}
@@ -114,103 +37,40 @@ const Navigation: React.FC = () => {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors focus-ring ${
-                  isActive(item.href)
-                    ? "bg-primary text-white"
-                    : "text-muted-foreground hover:text-card-foreground hover:bg-primary/10"
+                className={`text-sm transition-colors ${
+                  pathname === item.href
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                {getIcon(item.icon || "")}
-                <span>
-                  {showKorean && item.labelKorean
-                    ? item.labelKorean
-                    : item.label || ""}
-                </span>
+                {showKorean && item.labelKorean ? item.labelKorean : item.label}
               </Link>
             ))}
           </div>
 
-          {/* Right Side Actions */}
+          {/* Actions */}
           <div className="flex items-center gap-4">
-            {/* Theme Toggle */}
-            <div className="relative" ref={themeMenuRef}>
-              <button
-                onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
-                className="p-2 rounded-lg text-muted-foreground hover:text-card-foreground hover:bg-primary/10 transition-colors focus-ring"
-                aria-label="Toggle theme"
-              >
-                {actualTheme === "dark" ? (
-                  <Sun className="w-5 h-5" />
-                ) : (
-                  <Moon className="w-5 h-5" />
-                )}
-              </button>
-
-              {/* Theme Menu */}
-              {isThemeMenuOpen && (
-                <div className="absolute right-0 top-full mt-2 w-48 bg-card border border-border rounded-lg shadow-lg z-50">
-                  <div className="p-2">
-                    <button
-                      onClick={() => {
-                        setTheme("light");
-                        setIsThemeMenuOpen(false);
-                      }}
-                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
-                        theme === "light"
-                          ? "bg-primary text-white"
-                          : "text-muted-foreground hover:text-card-foreground hover:bg-primary/10"
-                      }`}
-                    >
-                      <Sun className="w-4 h-4" />
-                      {showKorean ? "라이트 모드" : "Light"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setTheme("dark");
-                        setIsThemeMenuOpen(false);
-                      }}
-                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
-                        theme === "dark"
-                          ? "bg-primary text-white"
-                          : "text-muted-foreground hover:text-card-foreground hover:bg-primary/10"
-                      }`}
-                    >
-                      <Moon className="w-4 h-4" />
-                      {showKorean ? "다크 모드" : "Dark"}
-                    </button>
-                    <button
-                      onClick={() => {
-                        setTheme("system");
-                        setIsThemeMenuOpen(false);
-                      }}
-                      className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ${
-                        theme === "system"
-                          ? "bg-primary text-white"
-                          : "text-muted-foreground hover:text-card-foreground hover:bg-primary/10"
-                      }`}
-                    >
-                      <Monitor className="w-4 h-4" />
-                      {showKorean ? "시스템" : "System"}
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === "en" ? "ko" : "en")}
-              className="px-3 py-1 rounded-lg text-sm font-medium text-muted-foreground hover:text-card-foreground hover:bg-primary/10 transition-colors focus-ring"
-              aria-label="Toggle language"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              {showKorean ? "EN" : "한"}
+              {language === "en" ? "한국어" : "EN"}
             </button>
 
-            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4" />
+              ) : (
+                <Moon className="w-4 h-4" />
+              )}
+            </button>
+
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-card-foreground hover:bg-primary/10 transition-colors focus-ring"
-              aria-label="Toggle mobile menu"
+              className="md:hidden p-2 text-foreground"
             >
               {isMobileMenuOpen ? (
                 <X className="w-5 h-5" />
@@ -221,30 +81,23 @@ const Navigation: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-border">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-base font-medium transition-colors focus-ring ${
-                    isActive(item.href)
-                      ? "bg-primary text-white"
-                      : "text-muted-foreground hover:text-card-foreground hover:bg-primary/10"
-                  }`}
-                >
-                  {getIcon(item.icon || "")}
-                  <span>
-                    {showKorean && item.labelKorean
-                      ? item.labelKorean
-                      : item.label}
-                  </span>
-                </Link>
-              ))}
-            </div>
+          <div className="md:hidden pb-4 border-t border-border/40 mt-4 pt-4">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block py-2 text-sm transition-colors ${
+                  pathname === item.href
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {showKorean && item.labelKorean ? item.labelKorean : item.label}
+              </Link>
+            ))}
           </div>
         )}
       </div>

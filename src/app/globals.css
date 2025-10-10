@@ -1,195 +1,107 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap");
 @import "tailwindcss";
 
-:root {
-  /* Korean-inspired color palette */
-  --background: #f1faee;
-  --foreground: #1d3557;
-  --primary: #e63946;
-  --primary-hover: #d62828;
-  --secondary: #a8dadc;
-  --accent: #f4a261;
-  --accent-hover: #e76f51;
-  --muted: #457b9d;
-  --muted-foreground: #6b7280;
-  --border: #e5e7eb;
-  --card: #ffffff;
-  --card-foreground: #1d3557;
+@theme {
+  --color-background: rgb(255 255 255);
+  --color-foreground: rgb(10 10 10);
+  --color-card: rgb(255 255 255);
+  --color-card-foreground: rgb(10 10 10);
+  --color-primary: rgb(10 10 10);
+  --color-primary-foreground: rgb(255 255 255);
+  --color-primary-hover: rgb(40 40 40);
+  --color-secondary: rgb(240 240 240);
+  --color-secondary-foreground: rgb(10 10 10);
+  --color-muted: rgb(245 245 245);
+  --color-muted-foreground: rgb(115 115 115);
+  --color-accent: rgb(240 240 240);
+  --color-accent-foreground: rgb(10 10 10);
+  --color-border: rgb(230 230 230);
+  --color-input: rgb(230 230 230);
+  --color-ring: rgb(10 10 10);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-primary: var(--primary);
-  --color-primary-hover: var(--primary-hover);
-  --color-secondary: var(--secondary);
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
+@layer base {
+  .dark {
+    --color-background: rgb(10 10 10);
+    --color-foreground: rgb(250 250 250);
+    --color-card: rgb(15 15 15);
+    --color-card-foreground: rgb(250 250 250);
+    --color-primary: rgb(250 250 250);
+    --color-primary-foreground: rgb(10 10 10);
+    --color-primary-hover: rgb(220 220 220);
+    --color-secondary: rgb(30 30 30);
+    --color-secondary-foreground: rgb(250 250 250);
+    --color-muted: rgb(25 25 25);
+    --color-muted-foreground: rgb(160 160 160);
+    --color-accent: rgb(30 30 30);
+    --color-accent-foreground: rgb(250 250 250);
+    --color-border: rgb(40 40 40);
+    --color-input: rgb(40 40 40);
+    --color-ring: rgb(250 250 250);
+  }
 
-  /* Typography */
-  --font-sans: "Inter", "Noto Sans KR", system-ui, sans-serif;
-  --font-korean: "Noto Sans KR", sans-serif;
-  --font-heading: "Poppins", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas,
-    "Liberation Mono", Menlo, monospace;
-}
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: "Inter", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
-    --primary: #ef4444;
-    --primary-hover: #dc2626;
-    --secondary: #1e293b;
-    --accent: #f59e0b;
-    --accent-hover: #d97706;
-    --muted: #475569;
-    --muted-foreground: #cbd5e1;
-    --border: #334155;
-    --card: #1e293b;
-    --card-foreground: #f8fafc;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Inter", "Noto Sans KR", system-ui, sans-serif;
+    font-weight: 700;
   }
 }
 
-/* Dark theme class for manual toggle */
-.dark {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --primary: #ef4444;
-  --primary-hover: #dc2626;
-  --secondary: #1e293b;
-  --accent: #f59e0b;
-  --accent-hover: #d97706;
-  --muted: #475569;
-  --muted-foreground: #cbd5e1;
-  --border: #334155;
-  --card: #1e293b;
-  --card-foreground: #f8fafc;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }
 
-/* Light theme class for manual toggle */
-.light {
-  --background: #f1faee;
-  --foreground: #1d3557;
-  --primary: #e63946;
-  --primary-hover: #d62828;
-  --secondary: #a8dadc;
-  --accent: #f4a261;
-  --accent-hover: #e76f51;
-  --muted: #457b9d;
-  --muted-foreground: #6b7280;
-  --border: #e5e7eb;
-  --card: #ffffff;
-  --card-foreground: #1d3557;
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Korean text styling */
-.korean-text {
-  font-family: var(--font-korean);
-  font-feature-settings: "kern" 1;
-}
-
-/* Heading styles */
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: var(--font-heading);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-}
-
-/* Custom scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--background);
+  background: var(--color-background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--muted);
+  background: var(--color-border);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: var(--color-muted-foreground);
 }
 
-/* Focus styles for accessibility */
-.focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+/* Selection */
+::selection {
+  background: var(--color-foreground);
+  color: var(--color-background);
 }
 
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  :root {
-    --border: #000000;
-    --muted-foreground: #000000;
-  }
-
-  .dark {
-    --border: #ffffff;
-    --muted-foreground: #ffffff;
-  }
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
 }
 
-/* Reduced motion support */
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  * {
-    transition: none !important;
-    animation: none !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
-}
-
-/* Better text contrast */
-.text-muted-foreground {
-  color: var(--muted-foreground);
-  opacity: 0.8;
-}
-
-.dark .text-muted-foreground {
-  opacity: 0.9;
-}
-
-/* Smooth transitions */
-* {
-  transition-property: color, background-color, border-color,
-    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
-    backdrop-filter;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Korean cultural pattern background */
-.korean-pattern {
-  background-image: radial-gradient(
-      circle at 25% 25%,
-      rgba(232, 57, 70, 0.1) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 75% 75%,
-      rgba(168, 218, 220, 0.1) 0%,
-      transparent 50%
-    );
-  background-size: 100px 100px;
 }
