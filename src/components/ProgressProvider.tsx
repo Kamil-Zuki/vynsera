@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 interface ProgressContextType {
   completedSteps: Set<string>;
@@ -14,30 +15,81 @@ const ProgressContext = createContext<ProgressContextType | undefined>(
 );
 
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // Load progress from localStorage or database
   useEffect(() => {
-    // Load progress from localStorage
-    const savedProgress = localStorage.getItem("korean-learning-progress");
-    if (savedProgress) {
-      try {
-        const steps = JSON.parse(savedProgress);
-        setCompletedSteps(new Set(steps));
-      } catch (error) {
-        console.error("Error loading progress:", error);
+    async function loadProgress() {
+      if (status === "loading") return;
+
+      if (status === "authenticated") {
+        // Load from database
+        try {
+          const response = await fetch("/api/user/progress");
+          if (response.ok) {
+            const data = await response.json();
+            setCompletedSteps(new Set(data.completedSteps || []));
+            setIsLoaded(true);
+          } else {
+            // Fallback to localStorage
+            loadFromLocalStorage();
+          }
+        } catch (error) {
+          console.error("Failed to load progress from database:", error);
+          loadFromLocalStorage();
+        }
+      } else {
+        // Load from localStorage
+        loadFromLocalStorage();
       }
     }
-  }, []);
 
-  useEffect(() => {
-    // Save progress to localStorage
-    if (completedSteps.size > 0) {
-      localStorage.setItem(
-        "korean-learning-progress",
-        JSON.stringify(Array.from(completedSteps))
-      );
+    function loadFromLocalStorage() {
+      const savedProgress = localStorage.getItem("korean-learning-progress");
+      if (savedProgress) {
+        try {
+          const steps = JSON.parse(savedProgress);
+          setCompletedSteps(new Set(steps));
+        } catch (error) {
+          console.error("Error loading progress:", error);
+        }
+      }
+      setIsLoaded(true);
     }
-  }, [completedSteps]);
+
+    loadProgress();
+  }, [status]);
+
+  // Save progress to localStorage and/or database
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const stepsArray = Array.from(completedSteps);
+
+    // Always save to localStorage as backup
+    localStorage.setItem(
+      "korean-learning-progress",
+      JSON.stringify(stepsArray)
+    );
+
+    // If authenticated, sync to database
+    if (status === "authenticated") {
+      const syncToDatabase = async () => {
+        try {
+          await fetch("/api/user/progress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ completedSteps: stepsArray }),
+          });
+        } catch (error) {
+          console.error("Failed to sync progress to database:", error);
+        }
+      };
+      syncToDatabase();
+    }
+  }, [completedSteps, isLoaded, status]);
 
   const toggleStep = (stepId: string) => {
     setCompletedSteps((prev) => {
