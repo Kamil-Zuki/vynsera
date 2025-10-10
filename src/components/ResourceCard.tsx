@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ExternalLink, Bookmark } from "lucide-react";
 import { useSession } from "next-auth/react";
 import type { Resource } from "@/types";
@@ -54,11 +55,15 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ resource }) => {
       : levelMap[level]?.en || level;
   };
 
+  const handleExternalClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(resource.link, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <a
-      href={resource.link}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      href={`/resource/${resource.slug}`}
       className="group block border border-border/40 rounded-lg p-6 transition-all hover:border-foreground/20"
     >
       {/* Header */}
@@ -105,7 +110,13 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ resource }) => {
               />
             </button>
           )}
-          <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+          <button
+            onClick={handleExternalClick}
+            className="p-2 rounded-lg hover:bg-muted transition-colors"
+            title={showKorean ? "외부 링크로 이동" : "Visit external link"}
+          >
+            <ExternalLink className="w-4 h-4 text-muted-foreground hover:text-foreground transition-colors" />
+          </button>
         </div>
       </div>
 
@@ -129,7 +140,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ resource }) => {
           ))}
         </div>
       )}
-    </a>
+    </Link>
   );
 };
 

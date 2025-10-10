@@ -30,6 +30,12 @@ const Navigation: React.FC = () => {
   const allNavigationItems = [
     { label: "Home", labelKorean: "홈", href: "/", requiresAuth: false },
     {
+      label: "Dashboard",
+      labelKorean: "대시보드",
+      href: "/dashboard",
+      requiresAuth: true,
+    },
+    {
       label: "Roadmap",
       labelKorean: "로드맵",
       href: "/roadmap",

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { Search, X } from "lucide-react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { Search, X, TrendingUp } from "lucide-react";
 import ResourceCard from "@/components/ResourceCard";
 import type { Resource, SearchFilters } from "@/types";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -14,6 +14,10 @@ export default function SearchPageClient() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<SearchFilters>({});
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function fetchResources() {
@@ -51,6 +55,87 @@ export default function SearchPageClient() {
     { value: "Course", label: "Course", labelKorean: "과정" },
     { value: "App", label: "App", labelKorean: "앱" },
   ];
+
+  // Generate search suggestions
+  const suggestions = useMemo(() => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+
+    const query = searchQuery.toLowerCase();
+    const suggestionSet = new Set<string>();
+
+    // Add matching resource titles
+    allResources.forEach((resource) => {
+      if (resource.title.toLowerCase().includes(query)) {
+        suggestionSet.add(resource.title);
+      }
+      if (resource.titleKorean?.toLowerCase().includes(query)) {
+        suggestionSet.add(resource.titleKorean);
+      }
+    });
+
+    // Add matching tags
+    allResources.forEach((resource) => {
+      resource.tags.forEach((tag) => {
+        if (tag.toLowerCase().includes(query)) {
+          suggestionSet.add(tag);
+        }
+      });
+    });
+
+    return Array.from(suggestionSet).slice(0, 8);
+  }, [searchQuery, allResources]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target as Node) &&
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : -1));
+    } else if (e.key === "Enter" && selectedSuggestionIndex >= 0) {
+      e.preventDefault();
+      setSearchQuery(suggestions[selectedSuggestionIndex]);
+      setShowSuggestions(false);
+      setSelectedSuggestionIndex(-1);
+    } else if (e.key === "Escape") {
+      setShowSuggestions(false);
+      setSelectedSuggestionIndex(-1);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    setSelectedSuggestionIndex(-1);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    setShowSuggestions(value.length >= 2);
+    setSelectedSuggestionIndex(-1);
+  };
 
   // Filter and search logic
   const filteredResources = useMemo(() => {
@@ -137,21 +222,51 @@ export default function SearchPageClient() {
         <div className="max-w-5xl mx-auto">
           {/* Search Bar */}
           <div className="relative mb-6">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5 z-10" />
             <input
+              ref={searchInputRef}
               type="text"
               placeholder={showKorean ? "자료 검색..." : "Search resources..."}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onFocus={() =>
+                searchQuery.length >= 2 && setShowSuggestions(true)
+              }
               className="w-full pl-12 pr-12 py-4 border border-border/40 rounded-lg bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:border-foreground/40 transition-colors"
+              autoComplete="off"
             />
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  setSearchQuery("");
+                  setShowSuggestions(false);
+                }}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground z-10"
               >
                 <X className="w-5 h-5" />
               </button>
+            )}
+
+            {/* Suggestions Dropdown */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div
+                ref={suggestionsRef}
+                className="absolute top-full mt-2 w-full bg-card border border-border/40 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50"
+              >
+                {suggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className={`w-full text-left px-4 py-3 hover:bg-muted transition-colors flex items-center gap-3 ${
+                      index === selectedSuggestionIndex ? "bg-muted" : ""
+                    }`}
+                  >
+                    <TrendingUp className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-foreground">{suggestion}</span>
+                  </button>
+                ))}
+              </div>
             )}
           </div>
 
