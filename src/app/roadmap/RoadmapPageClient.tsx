@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle } from "lucide-react";
-import RoadmapAccordion from "@/components/RoadmapAccordion";
+import { CheckCircle, Trophy } from "lucide-react";
+import VisualRoadmap from "@/components/VisualRoadmap";
 import type { Roadmap } from "@/types";
 import { useProgress } from "@/components/ProgressProvider";
 import { useLanguage } from "@/components/LanguageProvider";
@@ -12,7 +12,7 @@ export default function RoadmapPageClient() {
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { getProgressPercentage } = useProgress();
+  const { getProgressPercentage, isStepCompleted } = useProgress();
 
   useEffect(() => {
     async function fetchRoadmap() {
@@ -62,36 +62,72 @@ export default function RoadmapPageClient() {
     );
   }
 
+  const completedSteps =
+    roadmap.steps?.filter((step) => isStepCompleted(step.id)).length || 0;
+
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <section className="border-b border-border/40 py-16 px-6">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-            {showKorean ? "학습 로드맵" : "Learning Roadmap"}
-          </h1>
-          <p className="text-lg text-muted-foreground mb-6">
-            {showKorean
-              ? "초급부터 고급까지 구조화된 한국어 학습 경로"
-              : "Your structured path from beginner to advanced Korean"}
-          </p>
+      <section className="border-b border-border/40 py-12 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              {showKorean ? "한국어 학습 로드맵" : "Korean Learning Roadmap"}
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              {showKorean
+                ? "체계적인 학습 경로를 따라 한국어를 마스터하세요. 각 단계를 클릭하여 자세한 내용과 자료를 확인하세요."
+                : "Follow this structured path to master Korean. Click each step to view details and resources."}
+            </p>
+          </div>
 
-          {/* Progress */}
-          <div className="flex items-center gap-3 text-sm">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <CheckCircle className="w-4 h-4" />
-              <span>
-                {progressPercentage}% {showKorean ? "완료" : "complete"}
-              </span>
+          {/* Progress Stats */}
+          <div className="flex items-center justify-center gap-8 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-foreground" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-foreground">
+                  {completedSteps}/{totalSteps}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {showKorean ? "완료된 단계" : "Steps Complete"}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-foreground" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-foreground">
+                  {progressPercentage}%
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {showKorean ? "진행률" : "Progress"}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar */}
+          <div className="mt-8 max-w-md mx-auto">
+            <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full bg-foreground transition-all duration-500"
+                style={{ width: `${progressPercentage}%` }}
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Roadmap Steps */}
+      {/* Visual Roadmap */}
       <section className="py-12 px-6">
-        <div className="max-w-4xl mx-auto">
-          <RoadmapAccordion roadmap={roadmap} />
+        <div className="max-w-7xl mx-auto">
+          <VisualRoadmap roadmap={roadmap} />
         </div>
       </section>
     </div>

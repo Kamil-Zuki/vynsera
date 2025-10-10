@@ -11,6 +11,7 @@
     "type-check": "tsc --noEmit",
     "seed": "tsx scripts/seed-database.ts",
     "add-refold": "tsx scripts/add-refold-resources.ts",
+    "update-roadmap": "tsx scripts/update-roadmap-resources.ts",
     "deploy": "npm run build && docker-compose up -d --build",
     "deploy:prod": "npm run build && docker-compose -f docker-compose.prod.yml up -d --build"
   },
