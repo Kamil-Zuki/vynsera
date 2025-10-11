@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { ProgressProvider } from "@/components/ProgressProvider";
 import { WatchlistProvider } from "@/components/WatchlistProvider";
+import { AchievementToastContainer } from "@/components/AchievementToast";
 import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({
@@ -117,11 +118,13 @@ export default function RootLayout({
             <LanguageProvider>
               <WatchlistProvider>
                 <ProgressProvider>
-                  <div className="flex flex-col min-h-screen">
-                    <Navigation />
-                    <main className="flex-1">{children}</main>
-                    <Footer />
-                  </div>
+                  <AchievementToastContainer>
+                    <div className="flex flex-col min-h-screen">
+                      <Navigation />
+                      <main className="flex-1">{children}</main>
+                      <Footer />
+                    </div>
+                  </AchievementToastContainer>
                 </ProgressProvider>
               </WatchlistProvider>
             </LanguageProvider>

@@ -139,6 +139,54 @@ export interface UserProgress {
   totalStudyTime: number; // in minutes
   lastActive: string;
   achievements: string[];
+  streakData?: StreakData;
+  stats?: UserStats;
+}
+
+// Achievement and gamification types
+export interface Achievement {
+  id: string;
+  title: string;
+  titleKorean?: string;
+  description: string;
+  descriptionKorean?: string;
+  icon: string; // emoji or icon name
+  category: "progress" | "streak" | "milestone" | "special" | "exploration";
+  rarity: "common" | "rare" | "epic" | "legendary";
+  requirement: {
+    type: "steps_completed" | "days_streak" | "resources_viewed" | "watchlist_items" | "total_days" | "custom";
+    value: number;
+    additionalConditions?: Record<string, any>;
+  };
+  reward?: {
+    xp?: number;
+    badge?: string;
+  };
+  unlockedAt?: string;
+}
+
+export interface UserAchievement {
+  achievementId: string;
+  unlockedAt: string;
+  progress?: number;
+  maxProgress?: number;
+}
+
+export interface StreakData {
+  currentStreak: number;
+  longestStreak: number;
+  lastActiveDate: string;
+  streakHistory: string[]; // Array of dates in ISO format
+}
+
+export interface UserStats {
+  totalStepsCompleted: number;
+  totalResourcesViewed: number;
+  totalWatchlistItems: number;
+  totalDaysActive: number;
+  accountCreatedAt: string;
+  level: number;
+  xp: number;
 }
 
 // Analytics types

@@ -1,13 +1,18 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import type { Achievement, StreakData, UserStats } from "@/types";
 
 interface ProgressContextType {
   completedSteps: Set<string>;
   toggleStep: (stepId: string) => void;
   isStepCompleted: (stepId: string) => boolean;
   getProgressPercentage: (totalSteps: number) => number;
+  streakData: StreakData | null;
+  stats: UserStats | null;
+  checkAchievements: () => Promise<Achievement[]>;
+  refreshData: () => void;
 }
 
 const ProgressContext = createContext<ProgressContextType | undefined>(
@@ -18,6 +23,9 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
   const [isLoaded, setIsLoaded] = useState(false);
+  const [streakData, setStreakData] = useState<StreakData | null>(null);
+  const [stats, setStats] = useState<UserStats | null>(null);
+  const [lastStreakUpdate, setLastStreakUpdate] = useState<string | null>(null);
 
   // Load progress from localStorage or database
   useEffect(() => {
@@ -31,7 +39,12 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
           if (response.ok) {
             const data = await response.json();
             setCompletedSteps(new Set(data.completedSteps || []));
+            setStreakData(data.streakData || null);
+            setStats(data.stats || null);
             setIsLoaded(true);
+
+            // Update streak on first load
+            updateStreak();
           } else {
             // Fallback to localStorage
             loadFromLocalStorage();
@@ -61,6 +74,31 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
 
     loadProgress();
   }, [status]);
+
+  // Update streak when user is active
+  const updateStreak = async () => {
+    if (status !== "authenticated") return;
+
+    const today = new Date().toISOString().split("T")[0];
+    
+    // Only update once per day
+    if (lastStreakUpdate === today) return;
+
+    try {
+      const response = await fetch("/api/user/streak", {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStreakData(data.streakData);
+        setStats(data.stats);
+        setLastStreakUpdate(today);
+      }
+    } catch (error) {
+      console.error("Failed to update streak:", error);
+    }
+  };
 
   // Save progress to localStorage and/or database
   useEffect(() => {
@@ -113,11 +151,56 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       : 0;
   };
 
+  const checkAchievements = useCallback(async (): Promise<Achievement[]> => {
+    if (status !== "authenticated") return [];
+
+    try {
+      const response = await fetch("/api/achievements", {
+        method: "POST",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Update stats from response
+        if (data.stats) {
+          setStats(data.stats);
+        }
+
+        return data.newAchievements || [];
+      }
+    } catch (error) {
+      console.error("Failed to check achievements:", error);
+    }
+
+    return [];
+  }, [status]);
+
+  const refreshData = useCallback(async () => {
+    if (status !== "authenticated") return;
+
+    try {
+      const response = await fetch("/api/user/progress");
+      if (response.ok) {
+        const data = await response.json();
+        setCompletedSteps(new Set(data.completedSteps || []));
+        setStreakData(data.streakData || null);
+        setStats(data.stats || null);
+      }
+    } catch (error) {
+      console.error("Failed to refresh data:", error);
+    }
+  }, [status]);
+
   const value = {
     completedSteps,
     toggleStep,
     isStepCompleted,
     getProgressPercentage,
+    streakData,
+    stats,
+    checkAchievements,
+    refreshData,
   };
 
   return (

@@ -1,0 +1,309 @@
+[
+  {
+    "id": "first-step",
+    "title": "First Steps",
+    "titleKorean": "첫 걸음",
+    "description": "Complete your first roadmap step",
+    "descriptionKorean": "첫 번째 로드맵 단계를 완료하세요",
+    "icon": "🎯",
+    "category": "progress",
+    "rarity": "common",
+    "requirement": {
+      "type": "steps_completed",
+      "value": 1
+    },
+    "reward": {
+      "xp": 50
+    }
+  },
+  {
+    "id": "beginner-complete",
+    "title": "Beginner Graduate",
+    "titleKorean": "초급 졸업",
+    "description": "Complete 5 roadmap steps",
+    "descriptionKorean": "로드맵 5단계를 완료하세요",
+    "icon": "🎓",
+    "category": "milestone",
+    "rarity": "common",
+    "requirement": {
+      "type": "steps_completed",
+      "value": 5
+    },
+    "reward": {
+      "xp": 200
+    }
+  },
+  {
+    "id": "intermediate-complete",
+    "title": "Intermediate Master",
+    "titleKorean": "중급 마스터",
+    "description": "Complete 10 roadmap steps",
+    "descriptionKorean": "로드맵 10단계를 완료하세요",
+    "icon": "⭐",
+    "category": "milestone",
+    "rarity": "rare",
+    "requirement": {
+      "type": "steps_completed",
+      "value": 10
+    },
+    "reward": {
+      "xp": 500
+    }
+  },
+  {
+    "id": "advanced-complete",
+    "title": "Advanced Scholar",
+    "titleKorean": "고급 학자",
+    "description": "Complete 15 roadmap steps",
+    "descriptionKorean": "로드맵 15단계를 완료하세요",
+    "icon": "🏆",
+    "category": "milestone",
+    "rarity": "epic",
+    "requirement": {
+      "type": "steps_completed",
+      "value": 15
+    },
+    "reward": {
+      "xp": 1000
+    }
+  },
+  {
+    "id": "journey-complete",
+    "title": "Korean Master",
+    "titleKorean": "한국어 달인",
+    "description": "Complete all roadmap steps",
+    "descriptionKorean": "모든 로드맵 단계를 완료하세요",
+    "icon": "👑",
+    "category": "milestone",
+    "rarity": "legendary",
+    "requirement": {
+      "type": "steps_completed",
+      "value": 20
+    },
+    "reward": {
+      "xp": 5000
+    }
+  },
+  {
+    "id": "streak-3",
+    "title": "Getting Started",
+    "titleKorean": "시작하기",
+    "description": "Maintain a 3-day learning streak",
+    "descriptionKorean": "3일 연속 학습하세요",
+    "icon": "🔥",
+    "category": "streak",
+    "rarity": "common",
+    "requirement": {
+      "type": "days_streak",
+      "value": 3
+    },
+    "reward": {
+      "xp": 100
+    }
+  },
+  {
+    "id": "streak-7",
+    "title": "Week Warrior",
+    "titleKorean": "주간 전사",
+    "description": "Maintain a 7-day learning streak",
+    "descriptionKorean": "7일 연속 학습하세요",
+    "icon": "🔥",
+    "category": "streak",
+    "rarity": "rare",
+    "requirement": {
+      "type": "days_streak",
+      "value": 7
+    },
+    "reward": {
+      "xp": 300
+    }
+  },
+  {
+    "id": "streak-30",
+    "title": "Monthly Champion",
+    "titleKorean": "월간 챔피언",
+    "description": "Maintain a 30-day learning streak",
+    "descriptionKorean": "30일 연속 학습하세요",
+    "icon": "🔥",
+    "category": "streak",
+    "rarity": "epic",
+    "requirement": {
+      "type": "days_streak",
+      "value": 30
+    },
+    "reward": {
+      "xp": 1500
+    }
+  },
+  {
+    "id": "streak-100",
+    "title": "Dedication Legend",
+    "titleKorean": "헌신 전설",
+    "description": "Maintain a 100-day learning streak",
+    "descriptionKorean": "100일 연속 학습하세요",
+    "icon": "🌟",
+    "category": "streak",
+    "rarity": "legendary",
+    "requirement": {
+      "type": "days_streak",
+      "value": 100
+    },
+    "reward": {
+      "xp": 10000
+    }
+  },
+  {
+    "id": "explorer",
+    "title": "Resource Explorer",
+    "titleKorean": "자료 탐험가",
+    "description": "View 10 different resources",
+    "descriptionKorean": "10개의 다른 자료를 보세요",
+    "icon": "🔍",
+    "category": "exploration",
+    "rarity": "common",
+    "requirement": {
+      "type": "resources_viewed",
+      "value": 10
+    },
+    "reward": {
+      "xp": 150
+    }
+  },
+  {
+    "id": "collector",
+    "title": "Avid Collector",
+    "titleKorean": "열정적인 수집가",
+    "description": "View 50 different resources",
+    "descriptionKorean": "50개의 다른 자료를 보세요",
+    "icon": "📚",
+    "category": "exploration",
+    "rarity": "rare",
+    "requirement": {
+      "type": "resources_viewed",
+      "value": 50
+    },
+    "reward": {
+      "xp": 500
+    }
+  },
+  {
+    "id": "librarian",
+    "title": "Master Librarian",
+    "titleKorean": "마스터 사서",
+    "description": "View 100 different resources",
+    "descriptionKorean": "100개의 다른 자료를 보세요",
+    "icon": "📖",
+    "category": "exploration",
+    "rarity": "epic",
+    "requirement": {
+      "type": "resources_viewed",
+      "value": 100
+    },
+    "reward": {
+      "xp": 2000
+    }
+  },
+  {
+    "id": "watchlist-starter",
+    "title": "Watchlist Starter",
+    "titleKorean": "관심 목록 시작",
+    "description": "Add 5 resources to your watchlist",
+    "descriptionKorean": "관심 목록에 5개의 자료를 추가하세요",
+    "icon": "⭐",
+    "category": "progress",
+    "rarity": "common",
+    "requirement": {
+      "type": "watchlist_items",
+      "value": 5
+    },
+    "reward": {
+      "xp": 100
+    }
+  },
+  {
+    "id": "watchlist-enthusiast",
+    "title": "Watchlist Enthusiast",
+    "titleKorean": "관심 목록 애호가",
+    "description": "Add 20 resources to your watchlist",
+    "descriptionKorean": "관심 목록에 20개의 자료를 추가하세요",
+    "icon": "💫",
+    "category": "progress",
+    "rarity": "rare",
+    "requirement": {
+      "type": "watchlist_items",
+      "value": 20
+    },
+    "reward": {
+      "xp": 400
+    }
+  },
+  {
+    "id": "early-bird",
+    "title": "Early Bird",
+    "titleKorean": "얼리버드",
+    "description": "Active for 7 total days",
+    "descriptionKorean": "총 7일 동안 활동하세요",
+    "icon": "🌅",
+    "category": "progress",
+    "rarity": "common",
+    "requirement": {
+      "type": "total_days",
+      "value": 7
+    },
+    "reward": {
+      "xp": 150
+    }
+  },
+  {
+    "id": "regular-learner",
+    "title": "Regular Learner",
+    "titleKorean": "정규 학습자",
+    "description": "Active for 30 total days",
+    "descriptionKorean": "총 30일 동안 활동하세요",
+    "icon": "📅",
+    "category": "progress",
+    "rarity": "rare",
+    "requirement": {
+      "type": "total_days",
+      "value": 30
+    },
+    "reward": {
+      "xp": 600
+    }
+  },
+  {
+    "id": "veteran",
+    "title": "Veteran Learner",
+    "titleKorean": "베테랑 학습자",
+    "description": "Active for 100 total days",
+    "descriptionKorean": "총 100일 동안 활동하세요",
+    "icon": "🎖️",
+    "category": "progress",
+    "rarity": "epic",
+    "requirement": {
+      "type": "total_days",
+      "value": 100
+    },
+    "reward": {
+      "xp": 3000
+    }
+  },
+  {
+    "id": "welcome",
+    "title": "Welcome!",
+    "titleKorean": "환영합니다!",
+    "description": "Create your account and start your journey",
+    "descriptionKorean": "계정을 만들고 여정을 시작하세요",
+    "icon": "👋",
+    "category": "special",
+    "rarity": "common",
+    "requirement": {
+      "type": "custom",
+      "value": 0
+    },
+    "reward": {
+      "xp": 10
+    }
+  }
+]
+

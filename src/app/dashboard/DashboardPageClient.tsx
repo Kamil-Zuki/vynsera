@@ -15,21 +15,27 @@ import {
   Award,
   CheckCircle2,
   Lock,
+  Sparkles,
 } from "lucide-react";
 import { useLanguage } from "@/components/LanguageProvider";
 import { useProgress } from "@/components/ProgressProvider";
 import { useWatchlist } from "@/components/WatchlistProvider";
-import type { Roadmap } from "@/types";
+import AchievementBadge from "@/components/AchievementBadge";
+import AchievementsModal from "@/components/AchievementsModal";
+import { showAchievementToast } from "@/components/AchievementToast";
+import type { Roadmap, Achievement } from "@/types";
 
 export default function DashboardPageClient() {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { showKorean } = useLanguage();
-  const { completedSteps, getProgressPercentage } = useProgress();
+  const { completedSteps, getProgressPercentage, streakData, stats, checkAchievements } = useProgress();
   const { watchlistCount } = useWatchlist();
 
   const [roadmap, setRoadmap] = useState<Roadmap | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [achievements, setAchievements] = useState<(Achievement & { unlocked: boolean })[]>([]);
+  const [showAchievementsModal, setShowAchievementsModal] = useState(false);
 
   // Check authentication
   if (status === "loading") {
@@ -69,88 +75,48 @@ export default function DashboardPageClient() {
   }
 
   useEffect(() => {
-    async function fetchRoadmap() {
+    async function fetchData() {
       try {
+        // Fetch roadmap
         const response = await fetch("/api/roadmap");
         if (response.ok) {
           const data = await response.json();
           setRoadmap(data);
         }
+
+        // Fetch achievements
+        if (status === "authenticated") {
+          const achievementsResponse = await fetch("/api/achievements");
+          if (achievementsResponse.ok) {
+            const achievementsData = await achievementsResponse.json();
+            setAchievements(achievementsData.achievements || []);
+          }
+
+          // Check for new achievements
+          const newAchievements = await checkAchievements();
+          newAchievements.forEach((achievement) => {
+            showAchievementToast(achievement);
+          });
+        }
       } catch (error) {
-        console.error("Failed to fetch roadmap:", error);
+        console.error("Failed to fetch data:", error);
       } finally {
         setIsLoading(false);
       }
     }
-    fetchRoadmap();
-  }, []);
+    fetchData();
+  }, [status, checkAchievements]);
 
   // Calculate statistics
-  const stats = useMemo(() => {
+  const calculatedStats = useMemo(() => {
     const totalSteps = roadmap?.steps?.length || 0;
     const completed = completedSteps.size;
     const progressPercent = getProgressPercentage(totalSteps);
 
-    // Mock data for streak (will be replaced with real data)
-    const currentStreak = 7;
-    const longestStreak = 14;
-    const totalStudyHours = 42;
-
-    // Calculate achievements
-    const achievements = [
-      {
-        id: "first-step",
-        icon: Trophy,
-        title: showKorean ? "첫 걸음" : "First Step",
-        description: showKorean
-          ? "첫 번째 단계 완료"
-          : "Complete your first step",
-        unlocked: completed >= 1,
-        color: "text-yellow-500",
-      },
-      {
-        id: "milestone-5",
-        icon: Star,
-        title: showKorean ? "5단계 달성" : "5 Steps Milestone",
-        description: showKorean ? "5개 단계 완료" : "Complete 5 steps",
-        unlocked: completed >= 5,
-        color: "text-blue-500",
-      },
-      {
-        id: "halfway",
-        icon: Target,
-        title: showKorean ? "절반 완료" : "Halfway There",
-        description: showKorean ? "로드맵 50% 완료" : "Complete 50% of roadmap",
-        unlocked: progressPercent >= 50,
-        color: "text-purple-500",
-      },
-      {
-        id: "week-streak",
-        icon: Flame,
-        title: showKorean ? "일주일 연속" : "Week Streak",
-        description: showKorean ? "7일 연속 학습" : "Study for 7 days in a row",
-        unlocked: currentStreak >= 7,
-        color: "text-orange-500",
-      },
-      {
-        id: "bookworm",
-        icon: BookOpen,
-        title: showKorean ? "책벌레" : "Bookworm",
-        description: showKorean ? "10개 이상 북마크" : "Bookmark 10+ resources",
-        unlocked: watchlistCount >= 10,
-        color: "text-green-500",
-      },
-      {
-        id: "master",
-        icon: Award,
-        title: showKorean ? "마스터" : "Master",
-        description: showKorean
-          ? "모든 단계 완료"
-          : "Complete all roadmap steps",
-        unlocked: totalSteps > 0 && completed === totalSteps,
-        color: "text-red-500",
-      },
-    ];
+    // Use real streak data
+    const currentStreak = streakData?.currentStreak || 0;
+    const longestStreak = streakData?.longestStreak || 0;
+    const totalStudyHours = Math.floor((stats?.totalDaysActive || 0) * 0.5); // Estimate 30 min per day
 
     return {
       totalSteps,
@@ -159,14 +125,13 @@ export default function DashboardPageClient() {
       currentStreak,
       longestStreak,
       totalStudyHours,
-      achievements,
     };
   }, [
     roadmap,
     completedSteps,
     getProgressPercentage,
-    watchlistCount,
-    showKorean,
+    streakData,
+    stats,
   ]);
 
   // Mock activity data for last 7 days
@@ -219,12 +184,12 @@ export default function DashboardPageClient() {
                   {showKorean ? "진행률" : "Progress"}
                 </p>
                 <p className="text-2xl font-bold text-foreground">
-                  {stats.progressPercent}%
+                  {calculatedStats.progressPercent}%
                 </p>
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {stats.completed} / {stats.totalSteps}{" "}
+              {calculatedStats.completed} / {calculatedStats.totalSteps}{" "}
               {showKorean ? "단계" : "steps"}
             </p>
           </div>
@@ -240,12 +205,12 @@ export default function DashboardPageClient() {
                   {showKorean ? "현재 연속" : "Current Streak"}
                 </p>
                 <p className="text-2xl font-bold text-foreground">
-                  {stats.currentStreak} {showKorean ? "일" : "days"}
+                  {calculatedStats.currentStreak} {showKorean ? "일" : "days"}
                 </p>
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              {showKorean ? "최장 연속:" : "Longest:"} {stats.longestStreak}{" "}
+              {showKorean ? "최장 연속:" : "Longest:"} {calculatedStats.longestStreak}{" "}
               {showKorean ? "일" : "days"}
             </p>
           </div>
@@ -281,7 +246,7 @@ export default function DashboardPageClient() {
                   {showKorean ? "학습 시간" : "Study Time"}
                 </p>
                 <p className="text-2xl font-bold text-foreground">
-                  {stats.totalStudyHours}h
+                  {calculatedStats.totalStudyHours}h
                 </p>
               </div>
             </div>
@@ -323,52 +288,62 @@ export default function DashboardPageClient() {
 
             {/* Achievements */}
             <div className="border border-border/40 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                <Trophy className="w-6 h-6" />
-                {showKorean ? "성취" : "Achievements"}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {stats.achievements.map((achievement) => (
-                  <div
-                    key={achievement.id}
-                    className={`border border-border/40 rounded-lg p-4 transition-all ${
-                      achievement.unlocked ? "opacity-100" : "opacity-50"
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div
-                        className={`w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0 ${
-                          achievement.unlocked ? achievement.color : ""
-                        }`}
-                      >
-                        <achievement.icon
-                          className={`w-5 h-5 ${
-                            achievement.unlocked
-                              ? achievement.color
-                              : "text-muted-foreground"
-                          }`}
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-foreground mb-1">
-                          {achievement.title}
-                        </h3>
-                        <p className="text-xs text-muted-foreground">
-                          {achievement.description}
-                        </p>
-                        {achievement.unlocked && (
-                          <div className="flex items-center gap-1 mt-2">
-                            <CheckCircle2 className="w-3 h-3 text-green-500" />
-                            <span className="text-xs text-green-500 font-medium">
-                              {showKorean ? "달성" : "Unlocked"}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                  <Trophy className="w-6 h-6" />
+                  {showKorean ? "업적" : "Achievements"}
+                </h2>
+                <button
+                  onClick={() => setShowAchievementsModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {showKorean ? "모두 보기" : "View All"}
+                </button>
               </div>
+
+              {achievements.length === 0 ? (
+                <div className="text-center py-8">
+                  <Trophy className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">
+                    {showKorean ? "업적을 로드하는 중..." : "Loading achievements..."}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {/* Top unlocked achievements */}
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 mb-4">
+                    {achievements
+                      .filter(a => a.unlocked)
+                      .slice(0, 6)
+                      .map((achievement) => (
+                        <AchievementBadge
+                          key={achievement.id}
+                          achievement={achievement}
+                          size="medium"
+                          onClick={() => setShowAchievementsModal(true)}
+                        />
+                      ))}
+                    {achievements.filter(a => a.unlocked).length === 0 && (
+                      <div className="col-span-full text-center py-4 text-sm text-muted-foreground">
+                        {showKorean
+                          ? "아직 업적을 달성하지 못했습니다. 계속 학습하세요!"
+                          : "No achievements unlocked yet. Keep learning!"}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Progress stats */}
+                  <div className="flex items-center justify-between pt-4 border-t border-border/40 text-sm">
+                    <span className="text-muted-foreground">
+                      {showKorean ? "달성률" : "Completion"}
+                    </span>
+                    <span className="font-medium text-foreground">
+                      {achievements.filter(a => a.unlocked).length} / {achievements.length}
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -413,13 +388,13 @@ export default function DashboardPageClient() {
                       {showKorean ? "완료율" : "Completion"}
                     </span>
                     <span className="text-sm font-medium text-foreground">
-                      {stats.progressPercent}%
+                      {calculatedStats.progressPercent}%
                     </span>
                   </div>
                   <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
                     <div
                       className="h-full bg-foreground transition-all duration-500"
-                      style={{ width: `${stats.progressPercent}%` }}
+                      style={{ width: `${calculatedStats.progressPercent}%` }}
                     />
                   </div>
                 </div>
@@ -430,7 +405,7 @@ export default function DashboardPageClient() {
                       {showKorean ? "완료된 단계" : "Completed steps"}
                     </span>
                     <span className="font-medium text-foreground">
-                      {stats.completed}
+                      {calculatedStats.completed}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -438,7 +413,7 @@ export default function DashboardPageClient() {
                       {showKorean ? "남은 단계" : "Remaining steps"}
                     </span>
                     <span className="font-medium text-foreground">
-                      {stats.totalSteps - stats.completed}
+                      {calculatedStats.totalSteps - calculatedStats.completed}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -455,6 +430,12 @@ export default function DashboardPageClient() {
           </div>
         </div>
       </div>
+
+      {/* Achievements Modal */}
+      <AchievementsModal
+        isOpen={showAchievementsModal}
+        onClose={() => setShowAchievementsModal(false)}
+      />
     </div>
   );
 }
