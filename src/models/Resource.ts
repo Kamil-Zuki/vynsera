@@ -87,13 +87,17 @@ ResourceSchema.index({ level: 1 });
 ResourceSchema.index({ category: 1 });
 ResourceSchema.index({ isFree: 1 });
 ResourceSchema.index({ tags: 1 });
-ResourceSchema.index({
-  title: "text",
-  description: "text",
-  titleKorean: "text",
-  descriptionKorean: "text",
-  tags: "text",
-});
+// Create a text index and use `languageLabel` as the per-document language override
+ResourceSchema.index(
+  {
+    title: "text",
+    description: "text",
+    titleKorean: "text",
+    descriptionKorean: "text",
+    tags: "text",
+  },
+  { language_override: "languageLabel" }
+);
 
 const Resource = models.Resource || mongoose.model("Resource", ResourceSchema);
 
