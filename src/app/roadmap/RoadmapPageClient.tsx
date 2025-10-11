@@ -18,7 +18,29 @@ export default function RoadmapPageClient() {
   const [error, setError] = useState<string | null>(null);
   const { getProgressPercentage, isStepCompleted } = useProgress();
 
-  // Check authentication
+  useEffect(() => {
+    async function fetchRoadmap() {
+      try {
+        setIsLoading(true);
+        const response = await fetch("/api/roadmap");
+        if (!response.ok) {
+          throw new Error("Failed to fetch roadmap");
+        }
+        const data = await response.json();
+        setRoadmap(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load roadmap");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    if (status === "authenticated") {
+      fetchRoadmap();
+    }
+  }, [status]);
+
+  // Check authentication status after hooks are declared
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -55,28 +77,7 @@ export default function RoadmapPageClient() {
     );
   }
 
-  useEffect(() => {
-    async function fetchRoadmap() {
-      try {
-        setIsLoading(true);
-        const response = await fetch("/api/roadmap");
-        if (!response.ok) {
-          throw new Error("Failed to fetch roadmap");
-        }
-        const data = await response.json();
-        setRoadmap(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load roadmap");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchRoadmap();
-  }, []);
-
-  const totalSteps = roadmap?.steps?.length || 0;
-  const progressPercentage = getProgressPercentage(totalSteps);
-
+  // Handle error state
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -93,6 +94,7 @@ export default function RoadmapPageClient() {
     );
   }
 
+  // Handle loading state
   if (isLoading || !roadmap) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -103,6 +105,8 @@ export default function RoadmapPageClient() {
     );
   }
 
+  const totalSteps = roadmap?.steps?.length || 0;
+  const progressPercentage = getProgressPercentage(totalSteps);
   const completedSteps =
     roadmap.steps?.filter((step) => isStepCompleted(step.id)).length || 0;
 

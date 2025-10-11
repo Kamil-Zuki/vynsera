@@ -1,0 +1,102 @@
+{
+  "id": "korean_learning_roadmap",
+  "title": "Korean Learning Roadmap",
+  "titleKorean": "한국어 학습 로드맵",
+  "description": "A comprehensive roadmap for learning Korean based on Refold methodology",
+  "descriptionKorean": "Refold 방법론 기반의 한국어 학습을 위한 포괄적인 로드맵",
+  "level": "Beginner",
+  "totalEstimatedTime": "Several months to years",
+  "steps": [
+    {
+      "id": "step_1",
+      "title": "Stage 0: Mindset",
+      "titleKorean": "단계 0: 마인드셋",
+      "description": "Develop the right mindset for language learning",
+      "descriptionKorean": "언어 학습을 위한 올바른 마인드셋 개발",
+      "level": "Beginner",
+      "order": 1,
+      "estimatedTime": "1-2 weeks",
+      "skills": [
+        "Mindset",
+        "Motivation"
+      ],
+      "resources": [],
+      "prerequisites": []
+    },
+    {
+      "id": "step_2",
+      "title": "Stage 1: Foundation",
+      "titleKorean": "단계 1: 기초",
+      "description": "Lay the foundation with tools and habits",
+      "descriptionKorean": "도구와 습관을 통해 기초를 닦기",
+      "level": "Beginner",
+      "order": 2,
+      "estimatedTime": "1-3 months",
+      "skills": [
+        "Basic Korean",
+        "Phonology",
+        "Grammar"
+      ],
+      "resources": [],
+      "prerequisites": [
+        "step_1"
+      ]
+    },
+    {
+      "id": "step_3",
+      "title": "Stage 2: Build Comprehension",
+      "titleKorean": "단계 2: 이해력 구축",
+      "description": "Build comprehension through increasing difficulty",
+      "descriptionKorean": "점점 더 어려운 내용을 통해 이해력 구축",
+      "level": "Intermediate",
+      "order": 3,
+      "estimatedTime": "3-6 months",
+      "skills": [
+        "Intermediate Korean",
+        "Comprehension"
+      ],
+      "resources": [],
+      "prerequisites": [
+        "step_2"
+      ]
+    },
+    {
+      "id": "step_4",
+      "title": "Stage 3: Speaking Preparation",
+      "titleKorean": "단계 3: 말하기 준비",
+      "description": "Prepare for output and speaking practice",
+      "descriptionKorean": "출력 및 말하기 연습을 위한 준비",
+      "level": "Intermediate",
+      "order": 4,
+      "estimatedTime": "2-4 months",
+      "skills": [
+        "Speaking",
+        "Pronunciation"
+      ],
+      "resources": [],
+      "prerequisites": [
+        "step_3"
+      ]
+    },
+    {
+      "id": "step_5",
+      "title": "Stage 4: Refine to Mastery",
+      "titleKorean": "단계 4: 숙련도 향상",
+      "description": "Refine skills to achieve mastery",
+      "descriptionKorean": "숙련도를 향상시켜 마스터리 달성",
+      "level": "Advanced",
+      "order": 5,
+      "estimatedTime": "6+ months",
+      "skills": [
+        "Advanced Korean",
+        "Mastery"
+      ],
+      "resources": [],
+      "prerequisites": [
+        "step_4"
+      ]
+    }
+  ],
+  "createdAt": "2025-10-11T18:07:05.194Z",
+  "updatedAt": "2025-10-11T18:07:05.194Z"
+}

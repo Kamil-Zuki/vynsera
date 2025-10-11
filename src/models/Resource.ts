@@ -62,6 +62,7 @@ const ResourceSchema = new Schema(
     language: {
       type: String,
       required: true,
+      enum: ["Korean", "English", "Bilingual", "Chinese", "Japanese"],
     },
     features: {
       type: [String],

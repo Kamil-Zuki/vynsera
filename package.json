@@ -10,8 +10,12 @@
     "lint:fix": "eslint --fix",
     "type-check": "tsc --noEmit",
     "seed": "tsx scripts/seed-database.ts",
+  "import-refold-korean": "tsx scripts/import-refold-korean.ts",
     "add-refold": "tsx scripts/add-refold-resources.ts",
+    "add-refold-final": "tsx scripts/add-refold-resources-final.ts",
+    "export-resources": "tsx scripts/export-resources-to-file.ts",
     "update-roadmap": "tsx scripts/update-roadmap-resources.ts",
+    "clear-db": "tsx scripts/clear-mongodb.ts",
     "deploy": "npm run build && docker-compose up -d --build",
     "deploy:prod": "npm run build && docker-compose -f docker-compose.prod.yml up -d --build"
   },
