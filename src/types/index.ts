@@ -189,6 +189,50 @@ export interface UserStats {
   xp: number;
 }
 
+// Daily Quest System
+export interface DailyQuest {
+  id: string;
+  title: string;
+  titleKorean?: string;
+  description: string;
+  descriptionKorean?: string;
+  icon: string;
+  category: "steps" | "resources" | "streak" | "exploration" | "special";
+  difficulty: "easy" | "medium" | "hard";
+  requirement: {
+    type: "steps_completed" | "resources_viewed" | "watchlist_items" | "days_active" | "custom";
+    value: number;
+    additionalConditions?: Record<string, any>;
+  };
+  reward: {
+    xp: number;
+    coins?: number;
+    badge?: string;
+  };
+  expiresAt: string; // ISO date string
+  isCompleted: boolean;
+  progress: number;
+  maxProgress: number;
+}
+
+export interface QuestProgress {
+  questId: string;
+  progress: number;
+  maxProgress: number;
+  completedAt?: string;
+  claimedReward: boolean;
+}
+
+export interface DailyActivity {
+  date: string;
+  activities: {
+    type: string;
+    count: number;
+    timestamp: string;
+  }[];
+  totalCount: number;
+}
+
 // Analytics types
 export interface PageView {
   path: string;

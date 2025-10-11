@@ -88,6 +88,28 @@ const UserSchema = new Schema(
         default: 0,
       },
     },
+    // Daily activity tracking for heatmap
+    dailyActivity: {
+      type: [{
+        date: String,
+        activities: [{
+          type: String, // 'step_completed', 'resource_viewed', 'quest_completed', etc.
+          count: Number,
+          timestamp: Date,
+        }],
+        totalCount: Number,
+      }],
+      default: [],
+    },
+    // Track claimed quest rewards
+    claimedRewards: {
+      type: [{
+        questId: String,
+        date: String,
+        claimedAt: Date,
+      }],
+      default: [],
+    },
   },
   {
     timestamps: true,

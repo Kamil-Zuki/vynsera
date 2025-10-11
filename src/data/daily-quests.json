@@ -1,0 +1,155 @@
+[
+  {
+    "id": "daily-step-1",
+    "title": "First Steps Today",
+    "titleKorean": "오늘의 첫 걸음",
+    "description": "Complete 1 roadmap step today",
+    "descriptionKorean": "오늘 로드맵 1단계를 완료하세요",
+    "icon": "🎯",
+    "category": "steps",
+    "difficulty": "easy",
+    "requirement": {
+      "type": "steps_completed",
+      "value": 1
+    },
+    "reward": {
+      "xp": 50,
+      "coins": 10
+    }
+  },
+  {
+    "id": "daily-step-3",
+    "title": "Triple Progress",
+    "titleKorean": "삼중 진전",
+    "description": "Complete 3 roadmap steps today",
+    "descriptionKorean": "오늘 로드맵 3단계를 완료하세요",
+    "icon": "⚡",
+    "category": "steps",
+    "difficulty": "medium",
+    "requirement": {
+      "type": "steps_completed",
+      "value": 3
+    },
+    "reward": {
+      "xp": 150,
+      "coins": 25
+    }
+  },
+  {
+    "id": "daily-resource-5",
+    "title": "Resource Explorer",
+    "titleKorean": "자료 탐험가",
+    "description": "View 5 different resources today",
+    "descriptionKorean": "오늘 5개의 다른 자료를 보세요",
+    "icon": "🔍",
+    "category": "resources",
+    "difficulty": "easy",
+    "requirement": {
+      "type": "resources_viewed",
+      "value": 5
+    },
+    "reward": {
+      "xp": 75,
+      "coins": 15
+    }
+  },
+  {
+    "id": "daily-resource-10",
+    "title": "Knowledge Seeker",
+    "titleKorean": "지식 추구자",
+    "description": "View 10 different resources today",
+    "descriptionKorean": "오늘 10개의 다른 자료를 보세요",
+    "icon": "📚",
+    "category": "resources",
+    "difficulty": "hard",
+    "requirement": {
+      "type": "resources_viewed",
+      "value": 10
+    },
+    "reward": {
+      "xp": 200,
+      "coins": 40
+    }
+  },
+  {
+    "id": "daily-watchlist-3",
+    "title": "Curator",
+    "titleKorean": "큐레이터",
+    "description": "Add 3 resources to your watchlist today",
+    "descriptionKorean": "오늘 관심 목록에 3개의 자료를 추가하세요",
+    "icon": "⭐",
+    "category": "exploration",
+    "difficulty": "easy",
+    "requirement": {
+      "type": "watchlist_items",
+      "value": 3
+    },
+    "reward": {
+      "xp": 60,
+      "coins": 12
+    }
+  },
+  {
+    "id": "daily-streak-maintain",
+    "title": "Streak Keeper",
+    "titleKorean": "연속 유지자",
+    "description": "Maintain your learning streak today",
+    "descriptionKorean": "오늘 학습 연속을 유지하세요",
+    "icon": "🔥",
+    "category": "streak",
+    "difficulty": "easy",
+    "requirement": {
+      "type": "days_active",
+      "value": 1
+    },
+    "reward": {
+      "xp": 100,
+      "coins": 20
+    }
+  },
+  {
+    "id": "daily-special-weekend",
+    "title": "Weekend Warrior",
+    "titleKorean": "주말 전사",
+    "description": "Complete any activity on weekend",
+    "descriptionKorean": "주말에 어떤 활동이든 완료하세요",
+    "icon": "🏆",
+    "category": "special",
+    "difficulty": "easy",
+    "requirement": {
+      "type": "custom",
+      "value": 1,
+      "additionalConditions": {
+        "weekendOnly": true
+      }
+    },
+    "reward": {
+      "xp": 80,
+      "coins": 18
+    }
+  },
+  {
+    "id": "daily-marathon",
+    "title": "Learning Marathon",
+    "titleKorean": "학습 마라톤",
+    "description": "Complete 5 steps AND view 5 resources today",
+    "descriptionKorean": "오늘 5단계 완료하고 5개 자료 보기",
+    "icon": "🏃",
+    "category": "special",
+    "difficulty": "hard",
+    "requirement": {
+      "type": "custom",
+      "value": 1,
+      "additionalConditions": {
+        "stepsRequired": 5,
+        "resourcesRequired": 5
+      }
+    },
+    "reward": {
+      "xp": 300,
+      "coins": 60,
+      "badge": "marathon-runner"
+    }
+  }
+]
+

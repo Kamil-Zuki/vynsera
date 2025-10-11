@@ -23,6 +23,8 @@ import { useWatchlist } from "@/components/WatchlistProvider";
 import AchievementBadge from "@/components/AchievementBadge";
 import AchievementsModal from "@/components/AchievementsModal";
 import { showAchievementToast } from "@/components/AchievementToast";
+import LearningHeatmap from "@/components/LearningHeatmap";
+import DailyQuests from "@/components/DailyQuests";
 import type { Roadmap, Achievement } from "@/types";
 
 export default function DashboardPageClient() {
@@ -36,76 +38,6 @@ export default function DashboardPageClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [achievements, setAchievements] = useState<(Achievement & { unlocked: boolean })[]>([]);
   const [showAchievementsModal, setShowAchievementsModal] = useState(false);
-
-  // Check authentication
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-muted-foreground">
-          {showKorean ? "로딩 중..." : "Loading..."}
-        </p>
-      </div>
-    );
-  }
-
-  if (status === "unauthenticated") {
-    return (
-      <div className="min-h-screen flex items-center justify-center px-6">
-        <div className="max-w-md text-center">
-          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
-            <Lock className="w-10 h-10 text-muted-foreground" />
-          </div>
-          <h1 className="text-3xl font-bold text-foreground mb-4">
-            {showKorean ? "로그인이 필요합니다" : "Sign In Required"}
-          </h1>
-          <p className="text-muted-foreground mb-8">
-            {showKorean
-              ? "대시보드를 보려면 Google 계정으로 로그인해주세요."
-              : "Please sign in with your Google account to view your dashboard."}
-          </p>
-          <button
-            onClick={() => router.push("/auth/signin")}
-            className="px-6 py-3 bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors font-medium"
-          >
-            {showKorean ? "로그인" : "Sign In with Google"}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        // Fetch roadmap
-        const response = await fetch("/api/roadmap");
-        if (response.ok) {
-          const data = await response.json();
-          setRoadmap(data);
-        }
-
-        // Fetch achievements
-        if (status === "authenticated") {
-          const achievementsResponse = await fetch("/api/achievements");
-          if (achievementsResponse.ok) {
-            const achievementsData = await achievementsResponse.json();
-            setAchievements(achievementsData.achievements || []);
-          }
-
-          // Check for new achievements
-          const newAchievements = await checkAchievements();
-          newAchievements.forEach((achievement) => {
-            showAchievementToast(achievement);
-          });
-        }
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchData();
-  }, [status, checkAchievements]);
 
   // Calculate statistics
   const calculatedStats = useMemo(() => {
@@ -142,6 +74,76 @@ export default function DashboardPageClient() {
       completed: index < 5 ? Math.floor(Math.random() * 3) + 1 : 0,
     }));
   }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch roadmap
+        const response = await fetch("/api/roadmap");
+        if (response.ok) {
+          const data = await response.json();
+          setRoadmap(data);
+        }
+
+        // Fetch achievements
+        if (status === "authenticated") {
+          const achievementsResponse = await fetch("/api/achievements");
+          if (achievementsResponse.ok) {
+            const achievementsData = await achievementsResponse.json();
+            setAchievements(achievementsData.achievements || []);
+          }
+
+          // Check for new achievements
+          const newAchievements = await checkAchievements();
+          newAchievements.forEach((achievement) => {
+            showAchievementToast(achievement);
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchData();
+  }, [status, checkAchievements]);
+
+  // Check authentication after all hooks
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground">
+          {showKorean ? "로딩 중..." : "Loading..."}
+        </p>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return (
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <div className="max-w-md text-center">
+          <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-10 h-10 text-muted-foreground" />
+          </div>
+          <h1 className="text-3xl font-bold text-foreground mb-4">
+            {showKorean ? "로그인이 필요합니다" : "Sign In Required"}
+          </h1>
+          <p className="text-muted-foreground mb-8">
+            {showKorean
+              ? "대시보드를 보려면 Google 계정으로 로그인해주세요."
+              : "Please sign in with your Google account to view your dashboard."}
+          </p>
+          <button
+            onClick={() => router.push("/auth/signin")}
+            className="px-6 py-3 bg-foreground text-background rounded-lg hover:bg-foreground/90 transition-colors font-medium"
+          >
+            {showKorean ? "로그인" : "Sign In with Google"}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -259,32 +261,11 @@ export default function DashboardPageClient() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left column - Activity & Achievements */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Recent Activity */}
-            <div className="border border-border/40 rounded-lg p-6">
-              <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                <Calendar className="w-6 h-6" />
-                {showKorean ? "최근 활동" : "Recent Activity"}
-              </h2>
-              <div className="flex items-end justify-between gap-2 h-32">
-                {recentActivity.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex-1 flex flex-col items-center gap-2"
-                  >
-                    <div
-                      className="w-full bg-foreground rounded-t transition-all"
-                      style={{
-                        height: `${(item.completed / 3) * 100}%`,
-                        minHeight: item.completed > 0 ? "20%" : "0%",
-                      }}
-                    />
-                    <span className="text-xs text-muted-foreground">
-                      {item.day}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+            {/* Learning Heatmap */}
+            <LearningHeatmap />
+
+            {/* Daily Quests */}
+            <DailyQuests />
 
             {/* Achievements */}
             <div className="border border-border/40 rounded-lg p-6">

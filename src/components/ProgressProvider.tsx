@@ -13,6 +13,7 @@ interface ProgressContextType {
   stats: UserStats | null;
   checkAchievements: () => Promise<Achievement[]>;
   refreshData: () => void;
+  trackActivity: (activityType: string, count?: number) => Promise<void>;
 }
 
 const ProgressContext = createContext<ProgressContextType | undefined>(
@@ -192,6 +193,20 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     }
   }, [status]);
 
+  const trackActivity = useCallback(async (activityType: string, count: number = 1) => {
+    if (status !== "authenticated") return;
+
+    try {
+      await fetch("/api/user/activity", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ activityType, count }),
+      });
+    } catch (error) {
+      console.error("Failed to track activity:", error);
+    }
+  }, [status]);
+
   const value = {
     completedSteps,
     toggleStep,
@@ -201,6 +216,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     stats,
     checkAchievements,
     refreshData,
+    trackActivity,
   };
 
   return (
