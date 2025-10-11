@@ -208,6 +208,7 @@ export interface DailyQuest {
     xp: number;
     coins?: number;
     badge?: string;
+    claimed?: boolean;
   };
   expiresAt: string; // ISO date string
   isCompleted: boolean;

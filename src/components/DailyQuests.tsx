@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { CheckCircle, Clock, Star, Zap, Target, Trophy } from "lucide-react";
 import { useLanguage } from "./LanguageProvider";
 import { useProgress } from "./ProgressProvider";
+import { showAchievementToast } from "./AchievementToast";
 import type { DailyQuest } from "@/types";
 
 interface DailyQuestsProps {
@@ -64,15 +65,46 @@ export default function DailyQuests({ className = "" }: DailyQuestsProps) {
         fetchDailyQuests();
         // Show success message
         console.log("Reward claimed:", result);
-        // TODO: Show success toast with XP gained
+        try {
+          // Show a small achievement-style toast with XP gained
+          showAchievementToast({
+            id: `quest-claimed-${questId}`,
+            title: "Reward claimed",
+            titleKorean: "보상 받음",
+            description: result.rewards?.xp ? `+${result.rewards.xp} XP` : "Reward claimed",
+            descriptionKorean: result.rewards?.xp ? `+${result.rewards.xp} XP` : undefined,
+            icon: "✨",
+            category: "special",
+            rarity: "common",
+            requirement: { type: "custom", value: 0 },
+            reward: { xp: result.rewards?.xp || 0 },
+          } as any);
+        } catch (e) {
+          // Fallback: basic alert if toast fails
+          if (result.rewards?.xp) alert(`+${result.rewards.xp} XP`);
+        }
       } else {
-        const error = await response.json();
-        console.error("Failed to claim reward:", error.error);
-        // TODO: Show error toast
+        // Parse error payload robustly (server may return JSON or text)
+        let errorBody: any = null;
+        try {
+          errorBody = await response.json();
+        } catch (e) {
+          try {
+            errorBody = await response.text();
+          } catch (_) {
+            errorBody = null;
+          }
+        }
+
+  const msg = (errorBody && (errorBody.error || errorBody.message || errorBody)) || response.statusText || "Failed to claim reward";
+  // Expected API failures (e.g. quest not completed/already claimed) are logged at warn level
+  console.warn(`Failed to claim reward (status ${response.status}):`, msg);
+        // Show a user-facing error
+        alert(typeof msg === "string" ? msg : JSON.stringify(msg));
       }
     } catch (error) {
       console.error("Failed to claim reward:", error);
-      // TODO: Show error toast
+      alert("Failed to claim reward");
     }
   };
 
@@ -265,7 +297,7 @@ export default function DailyQuests({ className = "" }: DailyQuestsProps) {
                   </div>
 
                   {/* Claim Button */}
-                  {quest.isCompleted && !quest.reward.claimed && (
+                  {quest.isCompleted && !quest.reward?.claimed && (
                     <div className="mt-3">
                       <button
                         onClick={() => {
