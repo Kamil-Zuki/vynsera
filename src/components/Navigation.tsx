@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -10,6 +10,7 @@ import {
   Sun,
   Bookmark,
   User,
+  Users,
   LogOut,
   LogIn,
 } from "lucide-react";
@@ -26,6 +27,7 @@ const Navigation: React.FC = () => {
   const { language, setLanguage, showKorean } = useLanguage();
   const { watchlistCount } = useWatchlist();
   const { data: session, status } = useSession();
+  const [pendingRequests, setPendingRequests] = useState(0);
 
   const allNavigationItems = [
     { label: "Home", labelKorean: "홈", href: "/", requiresAuth: false },
@@ -47,6 +49,12 @@ const Navigation: React.FC = () => {
       href: "/search",
       requiresAuth: false,
     },
+      {
+        label: "Friends",
+        labelKorean: "친구",
+        href: "/friends",
+        requiresAuth: true,
+      },
     {
       label: "Watchlist",
       labelKorean: "관심 목록",
@@ -59,6 +67,27 @@ const Navigation: React.FC = () => {
   const navigationItems = allNavigationItems.filter(
     (item) => !item.requiresAuth || status === "authenticated"
   );
+
+  useEffect(() => {
+    let mounted = true;
+    async function fetchPending() {
+      if (status !== 'authenticated') {
+        setPendingRequests(0);
+        return;
+      }
+      try {
+        const res = await fetch('/api/friends');
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!mounted) return;
+        setPendingRequests((data.requests || []).length || 0);
+      } catch (e) {
+        // ignore
+      }
+    }
+    fetchPending();
+    return () => { mounted = false; };
+  }, [status]);
 
   return (
     <nav className="border-b border-border/40">
