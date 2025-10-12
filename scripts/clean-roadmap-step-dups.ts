@@ -37,11 +37,16 @@ async function main() {
     await mongoose.connection.close();
     return;
   }
-  const updated = { ...roadmap } as any;
+  /**
+   * Make a shallow clone and ensure typing is compatible with RoadmapModel
+   */
+  const updated = ({ ...(roadmap as unknown as Record<string, unknown>) } as { id?: string; steps: Array<{ id: string; resources?: string[] }>; [k: string]: unknown });
+
   for (const step of updated.steps) {
     if (suggested[step.id]) step.resources = suggested[step.id];
   }
-  await RoadmapModel.updateOne({ id: updated.id }, { $set: { ...updated, updatedAt: new Date() } } as any, { upsert: true } as any);
+
+  await RoadmapModel.updateOne({ id: updated.id as string }, { $set: { ...updated, updatedAt: new Date() } }, { upsert: true });
   console.log('Updated roadmap in DB with deduped resources');
   await mongoose.connection.close();
 }

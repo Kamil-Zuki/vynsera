@@ -78,7 +78,7 @@ export default function DailyQuests({ className = "" }: DailyQuestsProps) {
             rarity: "common",
             requirement: { type: "custom", value: 0 },
             reward: { xp: result.rewards?.xp || 0 },
-          } as any);
+      });
         } catch (e) {
           // Fallback: basic alert if toast fails
           if (result.rewards?.xp) alert(`+${result.rewards.xp} XP`);

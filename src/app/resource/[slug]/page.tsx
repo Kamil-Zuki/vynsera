@@ -1,13 +1,11 @@
 import { Metadata } from "next";
 import ResourceDetailClient from "./ResourceDetailClient";
 
-type Props = {
-  params: { slug: string };
-};
+type Props = { params: any };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Fetch resource data for metadata
-  const slug = params.slug;
+  const slug = params?.slug;
 
   return {
     title: `Resource: ${slug}`,
@@ -16,6 +14,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default function ResourceDetailPage({ params }: Props) {
-  return <ResourceDetailClient slug={params.slug} />;
+  return <ResourceDetailClient slug={params?.slug} />;
 }
 

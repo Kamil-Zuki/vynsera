@@ -1122,12 +1122,12 @@ async function addRefoldResources() {
         await Resource.create(resource);
         console.log(`✅ Added: ${resource.title}`);
         addedCount++;
-      } catch (error) {
-        if (error.code === 11000) {
+      } catch (error: any) {
+        if (error?.code === 11000) {
           console.log(`⏭️  Skipped: ${resource.title} (duplicate)`);
           skippedCount++;
         } else {
-          console.error(`❌ Error adding ${resource.title}:`, error.message);
+          console.error(`❌ Error adding ${resource.title}:`, error?.message ?? String(error));
         }
       }
     }
@@ -1137,8 +1137,8 @@ async function addRefoldResources() {
 
     const totalCount = await Resource.countDocuments();
     console.log(`📊 Total resources in database: ${totalCount}`);
-  } catch (error) {
-    console.error("Error adding Refold resources:", error);
+  } catch (error: any) {
+    console.error("Error adding Refold resources:", error?.message ?? String(error));
     process.exit(1);
   } finally {
     await mongoose.connection.close();

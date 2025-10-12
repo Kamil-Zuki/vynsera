@@ -17,19 +17,18 @@ async function exportResourcesToFile() {
     fileContent += '=========================\n\n';
     
     // Group resources by category
-    const groupedResources = {};
-    resources.forEach(resource => {
-      if (!groupedResources[resource.category]) {
-        groupedResources[resource.category] = [];
-      }
-      groupedResources[resource.category].push(resource);
+    const groupedResources: Record<string, typeof resources> = {};
+    resources.forEach((resource) => {
+      const cat = (resource.category as string) || 'Uncategorized';
+      if (!groupedResources[cat]) groupedResources[cat] = [];
+      groupedResources[cat].push(resource);
     });
 
     // Write each category and its resources to the file
     for (const [category, resourcesInCategory] of Object.entries(groupedResources)) {
       fileContent += `## ${category}\n\n`;
-      
-      resourcesInCategory.forEach(resource => {
+
+      (resourcesInCategory || []).forEach((resource: any) => {
         fileContent += `### ${resource.title}\n`;
         if (resource.titleKorean) {
           fileContent += `**Korean Title**: ${resource.titleKorean}\n`;
@@ -51,16 +50,16 @@ async function exportResourcesToFile() {
         }
         fileContent += '\n';
       });
-      
+
       fileContent += '\n';
     }
 
     // Write the content to the Refold Korean.txt file
-    const fs = require('fs');
-    const path = require('path');
-    
-    const filePath = path.join(process.cwd(), 'Refold Korean.txt');
-    fs.writeFileSync(filePath, fileContent, 'utf8');
+  const fs = require('fs');
+  const path = require('path');
+
+  const filePath = path.join(process.cwd(), 'Refold Korean.txt');
+  fs.writeFileSync(filePath, fileContent, 'utf8');
     
     console.log(`Successfully wrote ${resources.length} resources to Refold Korean.txt`);
     console.log(`File location: ${filePath}`);

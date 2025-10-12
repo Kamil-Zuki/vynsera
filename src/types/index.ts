@@ -234,6 +234,23 @@ export interface DailyActivity {
   totalCount: number;
 }
 
+// Social / Friends
+export interface FriendRequest {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  message?: string;
+  status: "pending" | "accepted" | "rejected" | "cancelled";
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface Friendship {
+  id: string;
+  users: [string, string];
+  since: string;
+}
+
 // Analytics types
 export interface PageView {
   path: string;

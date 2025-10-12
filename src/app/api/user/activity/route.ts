@@ -24,19 +24,21 @@ export async function GET(request: NextRequest) {
     const oneYearAgo = new Date(today);
     oneYearAgo.setFullYear(today.getFullYear() - 1);
 
-    const activityData = [];
-    const activityMap = new Map(
-      (user.dailyActivity || []).map((activity: any) => [activity.date, activity])
+    const activityData: Array<{ date: string; count: number; level: number }> = [];
+    const activityMap = new Map<string, any>(
+      (user.dailyActivity || []).map((activity: any) => [activity.date as string, activity])
     );
 
     for (let d = new Date(oneYearAgo); d <= today; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().split("T")[0];
-      const activity = activityMap.get(dateStr);
-      
+      const activity = activityMap.get(dateStr) as any;
+
+      const totalCount = (activity && typeof activity.totalCount === 'number') ? activity.totalCount : 0;
+
       activityData.push({
         date: dateStr,
-        count: activity?.totalCount || 0,
-        level: getActivityLevel(activity?.totalCount || 0),
+        count: totalCount,
+        level: getActivityLevel(totalCount),
       });
     }
 

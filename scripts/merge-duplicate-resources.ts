@@ -25,7 +25,7 @@ async function main() {
   await mongoose.connect(MONGODB_URI);
   console.log('Connected to DB');
 
-  const report: any[] = [];
+  const report: Array<Record<string, unknown>> = [];
 
   // Roadmap updates
   const roadmap = await RoadmapModel.findOne();
@@ -45,7 +45,7 @@ async function main() {
     }
     if (changed) {
       if (apply) {
-        await RoadmapModel.updateOne({ id: roadmapClone.id }, { $set: { ...roadmapClone, updatedAt: new Date() } } as any);
+        await RoadmapModel.updateOne({ id: roadmapClone.id }, { $set: { ...roadmapClone, updatedAt: new Date() } });
         console.log('Applied roadmap updates');
       } else {
         console.log('Roadmap would be updated (dry-run)');
@@ -56,30 +56,34 @@ async function main() {
   // Common user collections that might reference resource ids
   // Search and update fields in any collection that has array of resource ids: watchlists, users, etc.
   const admin = mongoose.connection.db;
-  const colls = await admin.listCollections().toArray();
-  for (const c of colls) {
-    const name = c.name;
-    // only check collections that are likely to contain resource references
-    if (!['users', 'watchlists', 'resources', 'roadmaps', 'sessions', 'migrations'].includes(name)) continue;
-    const coll = admin.collection(name);
-    // try to find documents containing any duplicate id
-    const q = { $or: dupIds.map(id => ({ resources: id })) };
-    try {
-      const docs = await coll.find(q).toArray();
-      for (const doc of docs) {
-        const before = doc.resources;
-        if (!Array.isArray(before)) continue;
-        const after = before.map((rid: string) => mapping[rid] || rid);
-        const uniqAfter = Array.from(new Set(after));
-        if (JSON.stringify(before) !== JSON.stringify(uniqAfter)) {
-          report.push({ collection: name, _id: doc._id, before, after: uniqAfter });
-          if (apply) {
-            await coll.updateOne({ _id: doc._id }, { $set: { resources: uniqAfter } } as any);
+  if (!admin) {
+    console.warn('No db admin available on mongoose.connection.db, skipping collection scan');
+  } else {
+    const colls = await admin.listCollections().toArray();
+    for (const c of colls) {
+      const name = (c as any).name;
+      // only check collections that are likely to contain resource references
+      if (!['users', 'watchlists', 'resources', 'roadmaps', 'sessions', 'migrations'].includes(name)) continue;
+      const coll = admin.collection(name);
+      // try to find documents containing any duplicate id
+      const q = { $or: dupIds.map(id => ({ resources: id })) };
+      try {
+        const docs = await coll.find(q).toArray();
+        for (const doc of docs) {
+          const before = doc.resources;
+          if (!Array.isArray(before)) continue;
+          const after = before.map((rid: string) => mapping[rid] || rid);
+          const uniqAfter = Array.from(new Set(after));
+          if (JSON.stringify(before) !== JSON.stringify(uniqAfter)) {
+            report.push({ collection: name, _id: doc._id, before, after: uniqAfter });
+            if (apply) {
+              await coll.updateOne({ _id: doc._id }, { $set: { resources: uniqAfter } } as any);
+            }
           }
         }
+      } catch (e) {
+        // ignore collections we can't process
       }
-    } catch (e) {
-      // ignore collections we can't process
     }
   }
 

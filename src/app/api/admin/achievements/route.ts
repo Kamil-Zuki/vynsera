@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       achievements: achievements.map(ach => ({
         ...ach,
-        _id: ach._id.toString(),
+        _id: String((ach as any)._id),
       })),
     });
   } catch (error) {
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       achievement: {
         ...achievement.toObject(),
-        _id: achievement._id.toString(),
+        _id: String((achievement as any)._id),
       },
     });
   } catch (error) {
@@ -118,7 +118,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({
       achievement: {
         ...achievement.toObject(),
-        _id: achievement._id.toString(),
+        _id: String((achievement as any)._id),
       },
     });
   } catch (error) {
@@ -169,7 +169,7 @@ export async function DELETE(request: NextRequest) {
       message: "Achievement deactivated successfully",
       achievement: {
         ...achievement.toObject(),
-        _id: achievement._id.toString(),
+        _id: String((achievement as any)._id),
       },
     });
   } catch (error) {

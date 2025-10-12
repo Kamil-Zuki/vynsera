@@ -3,56 +3,11 @@ import * as path from "path";
 import mongoose from "mongoose";
 import ResourceModel from "../src/models/Resource";
 import RoadmapModel from "../src/models/Roadmap";
+import { computeTfIdfIndex, scoreStepResourceTfIdf, tokenize, ResourceForScoring } from './lib/tfidf';
 
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/vynsera";
 
-function tokenize(s: string) {
-  if (!s) return [];
-  return Array.from(new Set((s || "").toLowerCase().match(/[a-z0-9\u3130-\u318F\uAC00-\uD7AF]+/gi) || [])).filter(Boolean);
-}
-
-// TF-IDF scoring: compute IDF across resource corpus, then TF for resource w.r.t step tokens
-function computeTfIdfIndex(resources: any[]) {
-  const df = new Map<string, number>();
-  const corpusTokens: string[][] = [];
-  for (const r of resources) {
-    const tokens = tokenize(`${r.title || ""} ${r.description || ""} ${r.tags?.join(" ") || ""}`);
-    corpusTokens.push(tokens);
-    const uniq = new Set(tokens);
-    for (const t of uniq) df.set(t, (df.get(t) || 0) + 1);
-  }
-  const N = resources.length;
-  const idf = new Map<string, number>();
-  for (const [t, count] of df.entries()) {
-    idf.set(t, Math.log(1 + N / (1 + count)));
-  }
-  return { idf };
-}
-
-function scoreStepResourceTfIdf(stepTokens: string[], resource: any, idf: Map<string, number>, phraseBonus = 3, ratingBoostScale = 4, efficiencyWeight = 0) {
-  const rTokens = tokenize(`${resource.title || ""} ${resource.description || ""} ${resource.tags?.join(" ") || ""}`);
-  const tf = new Map<string, number>();
-  for (const t of rTokens) tf.set(t, (tf.get(t) || 0) + 1);
-
-  let tfidfScore = 0;
-  for (const t of stepTokens) {
-    const termFreq = tf.get(t) || 0;
-    const idfVal = idf.get(t) || 0;
-    tfidfScore += termFreq * idfVal;
-  }
-
-  // rating/popularity boost
-  const ratingBoost = (resource.rating || 0) / 5; // 0..1
-
-  // exact phrase bonus when title contains whole step phrase
-  const stepPhrase = stepTokens.join(" ");
-  const titleStr = (resource.title || "").toLowerCase();
-  const exactPhraseBonus = titleStr.includes(stepPhrase) ? phraseBonus : 0;
-  const efficiencyBoost = (resource.efficiency || 0) * efficiencyWeight;
-
-  const score = tfidfScore * 10 + ratingBoost * ratingBoostScale + exactPhraseBonus + efficiencyBoost; // scale tfidf
-  return { score, tfidfScore, ratingBoost, exactPhraseBonus, efficiencyBoost };
-}
+// TF-IDF helpers are provided by scripts/lib/tfidf.ts
 
 async function main() {
   const argv = process.argv.slice(2);
@@ -77,7 +32,16 @@ async function main() {
   const roadmap = JSON.parse(fs.readFileSync(roadmapPath, "utf-8"));
 
   await mongoose.connect(MONGODB_URI);
-  const resources = await ResourceModel.find({}).lean();
+  const rawResources = (await ResourceModel.find({}).lean()) as unknown;
+  const resources = ((rawResources as any[]) || []).map((r) => ({
+    id: r.id || (r._id ? String(r._id) : undefined),
+    title: r.title,
+    description: r.description,
+    tags: r.tags,
+    rating: r.rating,
+    efficiency: r.efficiency,
+    link: r.link,
+  })) as ResourceForScoring[];
   console.log(`Loaded ${resources.length} resources from DB`);
 
   const suggestions: Record<string, string[]> = {};
@@ -92,7 +56,7 @@ async function main() {
     const stepTokens = tokenize(`${step.title} ${step.description} ${step.skills?.join(" ") || ""}`);
 
     const scored = resources.map((r) => {
-      const s = scoreStepResourceTfIdf(stepTokens, r, idf, phraseBonus, ratingBoostScale, efficiencyWeight);
+      const s = scoreStepResourceTfIdf(stepTokens, r, idf as Map<string, number>, phraseBonus, ratingBoostScale, efficiencyWeight);
       return { r, score: s.score, meta: s };
     });
 
@@ -150,7 +114,7 @@ async function main() {
     // Upsert roadmap
     const filter = { id: roadmap.id };
     const update = { $set: { ...roadmap, updatedAt: new Date() } };
-    const res = await RoadmapModel.updateOne(filter, update, { upsert: true } as any);
+      const res = await RoadmapModel.updateOne(filter, update, { upsert: true });
     console.log("Applied mapping and upserted roadmap:", res);
   }
 
